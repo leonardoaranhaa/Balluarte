@@ -52,15 +52,32 @@ Estas não são bugs. São decisões que a página carrega como `TODO` no HTML.
 
 1. **Link do CTA.** Hoje aponta para `mailto:contato@baluarte.com.br`. Precisa
    de uma URL real de agenda — um CTA que não agenda zera a métrica da página.
-2. **Fontes primárias.** A página cita a LGPD, um estudo da FGV, uma nota
-   técnica da ANPD e a decisão da autoridade austríaca. O rodapé nomeia as
-   quatro, mas sem link. **Não publique antes de preencher.** Uma página cujo
-   argumento é precisão não cita sem referência, e é a primeira coisa que um
-   comprador técnico confere.
-3. **Domínio.** `gw.baluarte.com.br` no diff é placeholder. O checklist de
+2. **Dois links do rodapé pedem um clique de confirmação.** As quatro fontes
+   estão linkadas. A página da ANPD foi verificada e as duas notas técnicas
+   conferem com o título exato. Já `planalto.gov.br` e `fgv.br` recusaram
+   conexão do container onde a página foi construída (HTTP 503), então esses
+   dois links não puderam ser abertos aqui. Abra os dois num navegador antes de
+   publicar.
+3. **O placar do estudo da FGV.** A página diz que Claude, Gemini e Meta AI
+   cumprem 11 dos 14 critérios, número que aparece no portal da própria FGV.
+   O Poder360 publicou 10. Bata no PDF do estudo quando conseguir abri-lo.
+4. **Domínio.** `gw.baluarte.com.br` no diff é placeholder. O checklist de
    constituição coloca a busca de anterioridade no INPI antes de qualquer
    investimento em identidade.
-4. **CNPJ e endereço** no rodapé, quando a SLU sair.
+5. **CNPJ e endereço** no rodapé, quando a SLU sair.
+
+## Fontes citadas
+
+Toda afirmação factual da página é rastreável a uma destas:
+
+- [Lei 13.709/2018 (LGPD), art. 33](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
+- [CTS/FGV Direito Rio — *IA Generativa e LGPD*](https://direitorio.fgv.br/conhecimento/livrosia-generativa-e-lgpd-transparencia-desafios-regulatorios-e-caminhos-para)
+- [ANPD — Nota Técnica nº 54/2025/FIS/CGF/ANPD](https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos), Mapa de Temas Prioritários 2026-2027
+- [ANPD — Nota Técnica nº 1/2026/FIS/CGF/ANPD](https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos), sistema Grok
+
+Uma afirmação que constava de rascunhos anteriores — multa de 450 mil euros
+aplicada pela autoridade austríaca a uma fintech de Viena por uso de API de IA
+americana — **não se sustenta em fonte primária e foi removida.** Não reintroduza.
 
 ## Restrições de marca respeitadas
 

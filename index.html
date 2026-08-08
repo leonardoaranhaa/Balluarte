@@ -244,6 +244,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .fact h3 { font-size: 1.0625rem; }
 .fact p { margin-top: 0.6rem; color: var(--mist); font-size: 0.9375rem; }
 .fact .src { display: block; margin-top: 0.75rem; font-family: var(--mono); font-size: 0.75rem; color: var(--mist); }
+.nb { white-space: nowrap; } /* impede quebra em intervalos como 2026-2027 */
 
 /* ── o caminho de um prompt ────────────────────────────────── */
 
@@ -308,8 +309,10 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .foot-grid { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
 @media (min-width: 46em) { .foot-grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; } }
 .foot ul { list-style: none; margin: 0; padding: 0; }
-.foot li + li { margin-top: 0.4rem; }
-.foot a { color: var(--paper); }
+/* cor sozinha não é sinal de link acessível */
+.foot a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
+.foot li { line-height: 1.5; }
+.foot li + li { margin-top: 0.65rem; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -411,35 +414,42 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 
     <div class="facts">
       <div class="fact">
-        <h3>Sete plataformas avaliadas. Nenhuma aprovada.</h3>
+        <h3>Sete plataformas, catorze critérios, nenhuma cumpre todos.</h3>
         <p>
-          Um estudo da FGV avaliou as sete principais plataformas de IA em nuvem —
-          ChatGPT, Gemini, Claude, Copilot, Grok, DeepSeek e Meta AI. Nenhuma passou
-          em conformidade plena com a LGPD. Falha recorrente: política de privacidade
-          sequer disponível em português.
+          O Centro de Tecnologia e Sociedade da FGV Direito Rio avaliou a documentação
+          de sete plataformas de IA generativa — ChatGPT, Gemini, Claude, Copilot,
+          Grok, DeepSeek e Meta AI — contra catorze critérios extraídos do Guia de
+          Segurança da Informação para Agentes de Tratamento de Pequeno Porte,
+          publicado pela ANPD em 2021. Nenhuma cumpre os catorze. Só três critérios
+          são cumpridos por todas: ter política de privacidade publicada, identificar
+          o controlador e informar quais dados são coletados. DeepSeek cumpre cinco;
+          Grok, seis.
         </p>
-        <span class="src">fonte: estudo FGV</span>
+        <span class="src">fonte: CTS/FGV Direito Rio — IA Generativa e LGPD</span>
       </div>
 
       <div class="fact">
-        <h3>A ANPD já se manifestou sobre IA.</h3>
+        <h3>As melhores avaliadas também não dizem para que país o dado vai.</h3>
         <p>
-          Em 2025, a autoridade publicou nota técnica sobre governança algorítmica e
-          proteção de dados em sistemas de inteligência artificial. O tema saiu do
-          campo hipotético.
+          Claude, Gemini e Meta AI foram as melhores no estudo, com onze dos catorze
+          critérios. Entre as falhas que restam está a falta de clareza sobre os
+          países para onde o dado é enviado. O BALUARTE integra o Claude, e dizemos
+          isso porque não muda o argumento: política de privacidade boa do provedor
+          não é a mesma coisa que base legal documentada da sua empresa para a
+          transferência. O art. 33 cobra a segunda.
         </p>
-        <span class="src">fonte: nota técnica ANPD, 2025</span>
+        <span class="src">fonte: CTS/FGV Direito Rio — IA Generativa e LGPD</span>
       </div>
 
       <div class="fact">
-        <h3>Servidor na Europa não bastou.</h3>
+        <h3>IA está entre os eixos de fiscalização da ANPD para <span class="nb">2026-2027</span>.</h3>
         <p>
-          Em março de 2026, a autoridade austríaca de proteção de dados multou uma
-          fintech de Viena em 450 mil euros por usar API de IA americana em scoring de
-          crédito. O servidor estava hospedado na Europa. A empresa continuava sujeita
-          ao CLOUD Act americano.
+          Em dezembro de 2025, a ANPD publicou o Mapa de Temas Prioritários do biênio
+          2026-2027, que traz inteligência artificial e tecnologias emergentes como um
+          dos eixos. Em 2026, a autoridade emitiu nota técnica sobre possíveis
+          violações à LGPD pelo sistema Grok.
         </p>
-        <span class="src">fonte: autoridade austríaca de proteção de dados, mar/2026</span>
+        <span class="src">fonte: ANPD — NT nº 54/2025/FIS/CGF e NT nº 1/2026/FIS/CGF</span>
       </div>
     </div>
   </section>
@@ -662,14 +672,24 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
     <div class="foot-grid">
       <div>
         <h3>Fontes</h3>
-        <!-- TODO(publicação): estas quatro precisam de link para a fonte primária.
-             Uma página cujo argumento é precisão não publica citação sem referência.
-             É a primeira coisa que um DPO cético confere. -->
         <ul>
-          <li>Lei 13.709/2018 (LGPD), art. 33 — transferência internacional de dados</li>
-          <li>FGV — estudo comparativo de plataformas de IA em nuvem</li>
-          <li>ANPD — nota técnica sobre governança algorítmica em sistemas de IA, 2025</li>
-          <li>Autoridade austríaca de proteção de dados — decisão de março de 2026</li>
+          <li>
+            <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm">Lei
+            13.709/2018 (LGPD), art. 33</a> — transferência internacional de dados
+          </li>
+          <li>
+            <a href="https://direitorio.fgv.br/conhecimento/livrosia-generativa-e-lgpd-transparencia-desafios-regulatorios-e-caminhos-para">CTS/FGV
+            Direito Rio — IA Generativa e LGPD</a>
+          </li>
+          <li>
+            <a href="https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos">ANPD
+            — Nota Técnica nº 54/2025/FIS/CGF/ANPD</a>, Mapa de Temas Prioritários do
+            biênio <span class="nb">2026-2027</span>
+          </li>
+          <li>
+            <a href="https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos">ANPD
+            — Nota Técnica nº 1/2026/FIS/CGF/ANPD</a>, sistema Grok
+          </li>
         </ul>
       </div>
       <div>
