@@ -17,6 +17,7 @@ raiz. Ele resume as regras inegociáveis e aponta para cá.
 | [`marca-e-operacional.md`](marca-e-operacional.md) | Nome, posicionamento, tom de voz, identidade visual, estrutura societária, preço e desconto, rotina, políticas internas | A cada 90 dias ou mudança material |
 | [`comercial-e-gtm.md`](comercial-e-gtm.md) | Segmentação, mensagem por persona, one-pager, pitch deck, script de discovery, matriz de objeções, funil e metas | A cada bloco de 10 discovery calls |
 | [`juridico-e-compliance.md`](juridico-e-compliance.md) | Mapa normativo, contratos, DPA, RIPD, riscos de compliance, plano de incidente, calendário | A cada mudança normativa ou 6 meses |
+| [`guia-da-marca.md`](guia-da-marca.md) | Símbolo, paleta, tipografia, uso do logotipo, geração de imagem com IA | Junto com `marca-e-operacional.md` |
 | [`fontes.md`](fontes.md) | Registro do que foi verificado, do que foi refutado e do que está em aberto | Sempre que um fato entrar, cair ou virar dúvida |
 | [`playbooks/construcao.md`](playbooks/construcao.md) | Sequência de prompts de build, Fase 0 a 5, com critério de saída por fase | Ao fim de cada fase |
 | [`playbooks/marketing.md`](playbooks/marketing.md) | Bloco de contexto mestre, prompts de landing, perfil LinkedIn e prospecção | Quando o contexto mestre mudar |

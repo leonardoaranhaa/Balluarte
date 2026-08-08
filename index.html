@@ -9,6 +9,11 @@
 <meta property="og:title" content="BALUARTE">
 <meta property="og:description" content="Um prompt com CPF é uma transferência internacional de dado pessoal. BALUARTE fica no meio do caminho.">
 <meta property="og:locale" content="pt_BR">
+
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon/favicon-dark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
+<meta name="theme-color" content="#0E1113">
 <style>
 /* ─────────────────────────────────────────────────────────────
    BALUARTE — landing de validação
@@ -18,15 +23,24 @@
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  --paper:      #F2F3F5;
-  --ink:        #1A1F27;
-  --mist:       #5C6673;
-  --graphite:   #14181F;
-  --amber:      #E9A23B;  /* acento sobre escuro  — 8,2:1 */
-  --amber-deep: #8A5A00;  /* acento sobre claro   — 5,3:1 */
+  /* Paleta oficial do guia da marca. Os hex de --paper e --graphite não são
+     negociáveis: os lockups do logo trazem placa de fundo embutida nessas
+     duas cores exatas, e qualquer desvio cria emenda visível em volta. */
+  --paper:      #E6E6E6;  /* neutro claro  — placa dos lockups "light" */
+  --graphite:   #0E1113;  /* base escura   — placa dos lockups "dark"  */
+  --amber:      #F5A623;  /* acento        — 9,4:1 sobre --graphite    */
 
-  --line:       #D6D9DE;
-  --line-dark:  #2A313D;
+  --ink:        #0E1113;  /* texto sobre claro — 15,2:1 */
+  --mist:       #5A6063;  /* texto secundário  —  5,1:1 */
+
+  /* O guia indica #B8770F para âmbar sobre fundo claro, mas medido dá 2,96:1
+     sobre --paper: reprova AA até para texto grande. Serve dentro do logo,
+     onde a WCAG isenta marca; não serve para texto da página. Este valor é o
+     equivalente escuro que passa — 5,4:1. Ver docs/guia-da-marca.md. */
+  --amber-deep: #7E5200;
+
+  --line:       #CFD1D2;
+  --line-dark:  #262A2C;
 
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, sans-serif;
@@ -97,10 +111,17 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line);
 }
-.mark {
-  font-weight: 600; letter-spacing: 0.18em; font-size: 0.9375rem;
-  color: var(--ink); text-decoration: none;
-}
+/* Os lockups trazem a área de respiro embutida na placa. Como a placa é
+   exatamente --paper (ou --graphite, no rodapé), esse respiro é invisível:
+   o logo pode ser dimensionado com folga sem abrir buraco no layout. */
+/* Todas as regras de display ficam na mesma especificidade (0-1-0) para que a
+   ordem e as media queries decidam. `.mark img { display: block }` venceria
+   `.mark--full { display: none }` e as queries nunca aplicariam. */
+.mark { display: inline-flex; text-decoration: none; }
+.mark--full { display: block; width: 210px; height: auto; } /* arte ~187px: acima do mínimo de 180px do guia */
+.mark--icon { display: block; width: 34px; height: auto; }
+@media (max-width: 29.99em) { .mark--full { display: none; } }
+@media (min-width: 30em)    { .mark--icon { display: none; } }
 
 /* ── botões ────────────────────────────────────────────────── */
 
@@ -112,7 +133,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   text-decoration: none; border: 1px solid var(--graphite);
   transition: background 140ms ease;
 }
-.btn:hover { background: #222933; }
+.btn:hover { background: #20262A; }
 .btn--sm { padding: 0.5rem 0.9rem; font-size: 0.9375rem; }
 .btn--lg { padding: 0.9rem 1.5rem; font-size: 1.0625rem; }
 
@@ -140,7 +161,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .panel-head {
   display: flex; justify-content: space-between; gap: 0.75rem;
   font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.28vw, 0.75rem);
-  letter-spacing: 0.06em; color: rgba(242,243,245,0.7);
+  letter-spacing: 0.06em; color: rgba(230,230,230,0.7);
   padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-dark);
 }
 .panel-head span:last-child { text-align: right; }
@@ -170,8 +191,8 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   display: inline-grid;
   align-items: baseline;
   justify-items: center;
-  background: rgba(233,162,59,0.10);
-  border-bottom: 1px solid rgba(233,162,59,0.5);
+  background: rgba(245,166,35,0.12);
+  border-bottom: 1px solid rgba(245,166,35,0.55);
   border-radius: 2px 2px 0 0;
 }
 .pii > * { grid-row: 1; grid-column: 1; white-space: nowrap; }
@@ -206,7 +227,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .ctrl:focus-visible ~ .rule { box-shadow: 0 0 0 2px var(--graphite), 0 0 0 4px var(--amber); }
 
 .hint {
-  font-family: var(--mono); font-size: 0.75rem; color: rgba(242,243,245,0.7);
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
   margin-top: 0.35rem;
 }
 .hint kbd {
@@ -215,21 +236,21 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 }
 .nojs {
   display: none;
-  font-family: var(--mono); font-size: 0.75rem; color: rgba(242,243,245,0.7);
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
   margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
 }
 
 .audit {
   margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
   font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
-  color: rgba(242,243,245,0.7);
+  color: rgba(230,230,230,0.7);
 }
 #audit-body { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; }
 .audit b { font-weight: inherit; color: var(--amber); }
 .audit-label {
   display: block; font-family: var(--mono); font-size: 0.6875rem;
   letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(242,243,245,0.55); margin-top: 1rem;
+  color: rgba(230,230,230,0.55); margin-top: 1rem;
 }
 
 .caption {
@@ -263,7 +284,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   font-family: var(--mono);
   font-size: clamp(0.75rem, 0.68rem + 0.32vw, 0.8125rem);
   line-height: 1.9; color: var(--ink);
-  background: #E7E9ED; border-radius: var(--r);
+  background: #DEE0E1; border-radius: var(--r);
   padding: 0.85rem 1rem; margin-top: 0.25rem;
   overflow-x: auto;
 }
@@ -278,7 +299,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   line-height: 2; overflow-x: auto;
 }
 .diff div { white-space: nowrap; }
-.diff .minus { color: rgba(242,243,245,0.55); }
+.diff .minus { color: rgba(230,230,230,0.55); }
 .diff .plus { color: var(--amber); }
 .diff .sig { user-select: none; display: inline-block; width: 1.5em; }
 
@@ -322,13 +343,13 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .form-status:not(:empty) { border-left: 2px solid var(--amber-deep); padding-left: 0.7rem; }
 
 .foot {
-  background: var(--graphite); color: rgba(242,243,245,0.7);
+  background: var(--graphite); color: rgba(230,230,230,0.7);
   font-size: 0.875rem; padding-block: 3rem;
 }
-.foot .mark { color: var(--paper); }
+.foot .mark--full { display: block; width: 210px; }
 .foot h3 {
   font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.14em;
-  text-transform: uppercase; color: rgba(242,243,245,0.55);
+  text-transform: uppercase; color: rgba(230,230,230,0.55);
   font-weight: 400; margin-bottom: 0.75rem;
 }
 .foot-grid { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
@@ -362,7 +383,12 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="wrap top">
-  <a class="mark" href="#">BALUARTE</a>
+  <a class="mark" href="#" aria-label="BALUARTE — início">
+    <img class="mark--full" src="/assets/marca/svg/baluarte-logo-horizontal-light-simples.svg"
+         alt="" width="1169" height="428">
+    <img class="mark--icon" src="/assets/marca/svg/baluarte-mark-simplificado-light.svg"
+         alt="" width="320" height="300">
+  </a>
   <a class="btn btn--sm" href="#agendar">Agendar 20 minutos</a>
 </header>
 
@@ -727,7 +753,8 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 
 <footer class="foot">
   <div class="wrap">
-    <span class="mark">BALUARTE</span>
+    <img class="mark--full" src="/assets/marca/svg/baluarte-logo-horizontal-dark-simples.svg"
+         alt="BALUARTE" width="1169" height="428">
     <div class="foot-grid">
       <div>
         <h3>Fontes</h3>

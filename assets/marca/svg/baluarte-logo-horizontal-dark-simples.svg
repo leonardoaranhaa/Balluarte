@@ -1,0 +1,18 @@
+<svg viewBox="0 0 1169 428" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BALUARTE — a camada de confiança entre sua empresa e a IA">
+<rect width="1169" height="428" fill="#0E1113"/>
+<g transform="translate(64,64) scale(1.00000)">
+<defs>
+<linearGradient id="pnl" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0%" stop-color="#EDEDED"/><stop offset="100%" stop-color="#8E9598"/></linearGradient>
+<linearGradient id="bm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F5A623" stop-opacity="0.62"/><stop offset="55%" stop-color="#F5A623" stop-opacity="0.22"/><stop offset="100%" stop-color="#F5A623" stop-opacity="0"/></linearGradient>
+<radialGradient id="gl" cx="0.5" cy="0.52" r="0.5"><stop offset="0%" stop-color="#F5A623" stop-opacity="0.45"/><stop offset="100%" stop-color="#F5A623" stop-opacity="0"/></radialGradient>
+</defs>
+<ellipse cx="160" cy="150" rx="86" ry="118" fill="url(#gl)"/>
+<polygon points="142,200 178,200 222,300 98,300" fill="url(#bm)"/>
+<polygon points="30,60 134,96 134,196 30,224" fill="url(#pnl)"/>
+<polygon points="290,60 186,96 186,196 290,224" fill="url(#pnl)"/>
+<rect x="140.5" y="52" width="9" height="168" fill="#C9CFD2"/>
+<rect x="155.5" y="44" width="9" height="176" fill="#F5A623"/>
+<rect x="170.5" y="52" width="9" height="168" fill="#C9CFD2"/>
+</g>
+<g fill="#E6E6E6"><g transform="translate(438.00,260.08) scale(0.12800,-0.12800)"><path d="M77 698H416Q503 698 551.5 649.0Q600 600 600 519Q600 479 589.5 451.0Q579 423 561.5 405.0Q544 387 520.5 378.5Q497 370 470 369V363Q495 363 522.5 354.0Q550 345 573.0 325.5Q596 306 611.5 275.0Q627 244 627 199Q627 158 613.5 121.5Q600 85 576.0 58.0Q552 31 519.0 15.5Q486 0 447 0H77ZM229 128H404Q434 128 451.5 144.5Q469 161 469 191V225Q469 255 451.5 271.5Q434 288 404 288H229ZM229 412H380Q410 412 427.0 429.0Q444 446 444 476V506Q444 536 427.0 553.0Q410 570 380 570H229Z"/></g><g transform="translate(524.91,260.08) scale(0.12800,-0.12800)"><path d="M507 0 457 166H224L174 0H20L250 698H438L665 0ZM342 560H337L260 295H420Z"/></g><g transform="translate(614.13,260.08) scale(0.12800,-0.12800)"><path d="M77 0V698H229V135H495V0Z"/></g><g transform="translate(683.50,260.08) scale(0.12800,-0.12800)"><path d="M221 698V270Q221 196 250.0 159.5Q279 123 347 123Q415 123 444.0 159.5Q473 196 473 270V698H621V286Q621 209 606.5 152.5Q592 96 559.0 59.5Q526 23 474.0 5.5Q422 -12 347 -12Q272 -12 220.0 5.5Q168 23 135.0 59.5Q102 96 87.5 152.5Q73 209 73 286V698Z"/></g><g transform="translate(773.87,260.08) scale(0.12800,-0.12800)"><path d="M507 0 457 166H224L174 0H20L250 698H438L665 0ZM342 560H337L260 295H420Z"/></g><g transform="translate(863.09,260.08) scale(0.12800,-0.12800)"><path d="M229 0H77V698H408Q456 698 495.0 682.0Q534 666 561.5 636.5Q589 607 604.0 566.0Q619 525 619 475Q619 404 587.5 351.0Q556 298 492 274L629 0H460L338 256H229ZM389 384Q423 384 442.5 401.5Q462 419 462 453V497Q462 531 442.5 548.5Q423 566 389 566H229V384Z"/></g><g transform="translate(950.90,260.08) scale(0.12800,-0.12800)"><path d="M368 563V0H216V563H27V698H557V563Z"/></g><g transform="translate(1027.18,260.08) scale(0.12800,-0.12800)"><path d="M77 0V698H552V563H229V420H506V286H229V135H552V0Z"/></g></g>
+</svg>

@@ -6,13 +6,17 @@
 <title>Recebido — BALUARTE</title>
 <meta name="robots" content="noindex">
 <meta name="color-scheme" content="light">
+<link rel="icon" href="/favicon/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon/favicon-dark.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
+<meta name="theme-color" content="#0E1113">
 <style>
 :root {
-  --paper: #F2F3F5;
-  --ink: #1A1F27;
-  --mist: #5C6673;
-  --graphite: #14181F;
-  --amber-deep: #8A5A00;
+  --paper: #E6E6E6;
+  --ink: #0E1113;
+  --mist: #5A6063;
+  --graphite: #0E1113;
+  --amber-deep: #7E5200;
   --r: 4px;
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, sans-serif;
@@ -27,11 +31,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .wrap { width: 100%; max-width: 34rem; margin-inline: auto; }
-.mark {
-  display: inline-block; font-weight: 600; letter-spacing: 0.18em;
-  font-size: 0.9375rem; color: var(--ink); text-decoration: none;
-  margin-bottom: 2.5rem;
-}
+.mark { display: inline-flex; text-decoration: none; margin-bottom: 2.5rem; }
+.mark img { display: block; width: 210px; height: auto; }
 h1 {
   font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
   font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin: 0;
@@ -50,7 +51,10 @@ a { color: var(--amber-deep); text-underline-offset: 3px; }
 </head>
 <body>
   <div class="wrap">
-    <a class="mark" href="/">BALUARTE</a>
+    <a class="mark" href="/" aria-label="BALUARTE — início">
+      <img src="/assets/marca/svg/baluarte-logo-horizontal-light-simples.svg"
+           alt="" width="1169" height="428">
+    </a>
 
     <h1>Recebido.</h1>
 

@@ -114,6 +114,7 @@ está em `docs/README.md`.
 |---|---|
 | Produto e arquitetura | `docs/produto-e-tecnico.md` |
 | Marca, tom de voz, operação | `docs/marca-e-operacional.md` |
+| Identidade visual, paleta, logo | `docs/guia-da-marca.md` |
 | Venda, ICP, objeções | `docs/comercial-e-gtm.md` |
 | Contratos, RIPD, risco | `docs/juridico-e-compliance.md` |
 | Fatos verificados | `docs/fontes.md` |
@@ -128,11 +129,15 @@ está em `docs/README.md`.
 `vercel.json`), no ar em <https://baluarte-teal.vercel.app>, com formulário
 do Formspree capturando pedido de call. Site estático, sem build.
 
-**Última decisão relevante:** as fontes citadas em material público foram
-verificadas contra o primário. A multa austríaca de €450 mil foi refutada e
-removida de todos os documentos; o estudo da FGV passou a ser descrito com
-precisão; as notas técnicas da ANPD foram corrigidas. Registro em
-`docs/fontes.md`.
+**Última decisão relevante:** a identidade visual v1 entrou no repositório
+(`assets/marca/`, `favicon/`, `docs/guia-da-marca.md`) e na landing. A paleta da
+página passou a usar os hex oficiais — `#E6E6E6`, `#0E1113`, `#F5A623` — porque
+os lockups do logo trazem placa de fundo embutida nessas cores exatas e qualquer
+desvio cria emenda visível.
+
+**Regra de cor que veio disso:** o `#B8770F` do guia mede 2,96:1 sobre o neutro
+claro e reprova AA. Serve dentro do logo, onde a WCAG isenta marca; para texto
+usar `#7E5200`, que dá 5,4:1.
 
 **Próximo passo lógico:** Fase 0 do `docs/playbooks/construcao.md` — validar
 a premissa técnica (LiteLLM + Presidio, recognizers de CPF/CNPJ com dígito
