@@ -1,12 +1,14 @@
 # BALUARTE — landing page de validação
 
-Página única de validação comercial. Um arquivo, sem framework, sem build,
-sem dependência de rede.
+Página de validação comercial. Sem framework, sem build e sem dependência de
+rede de terceiro — o único destino externo é o endpoint do Formspree, para onde
+o formulário posta.
 
 **Objetivo único:** converter um DPO ou CISO cético em uma conversa de 20
 minutos. A métrica é número de agendamentos, não de visitas. Por isso a página
-tem um só CTA — sem captura de e-mail, sem newsletter, sem material para
-download.
+tem uma só ação — o formulário de pedido de call no fim, para onde apontam todos
+os CTAs. Sem newsletter e sem material para download: nada que dispute atenção
+com o único número que importa.
 
 ## Como abrir
 
@@ -28,7 +30,7 @@ O `vercel.json` só define cabeçalhos de resposta.
 
 | Cabeçalho | Valor |
 |---|---|
-| `Content-Security-Policy` | `default-src 'none'` com `style-src`/`script-src` em `'self' 'unsafe-inline'`, mais `base-uri`, `form-action`, `frame-ancestors` e `object-src` em `'none'` |
+| `Content-Security-Policy` | `default-src 'none'`; `style-src`/`script-src` em `'self' 'unsafe-inline'`; `connect-src` e `form-action` liberados **só** para `https://formspree.io`; `base-uri`, `frame-ancestors` e `object-src` em `'none'` |
 | `X-Content-Type-Options` | `nosniff` |
 | `X-Frame-Options` | `DENY` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
@@ -50,11 +52,38 @@ Duas decisões que valem explicação, já que o produto vende disciplina de dad
   HSTS na mesma resposta, com o valor mais fraco na frente — exatamente o tipo de
   achado que aparece num scan de cabeçalhos.
 
-**Proteção de deploy:** o projeto está com Vercel Authentication (SSO) ligada
-para tudo que não seja domínio próprio. Isso significa que a URL de preview
-**não abre para quem não estiver logado no time.** Para mandar a página a um
-prospect, ou se gera um link temporário de compartilhamento na Vercel, ou se
-desliga a proteção nas configurações do projeto.
+**Proteção de deploy:** desligada. O site é público em
+`https://baluarte-teal.vercel.app`, sem `noindex`. Se em algum momento a página
+precisar voltar a ficar fechada, é a opção Vercel Authentication nas
+configurações do projeto.
+
+## Captação de lead (Formspree)
+
+Endpoint: `https://formspree.io/f/mppaqlvp`. O formulário fica na seção final
+(`#agendar`); os CTAs do cabeçalho e do hero levam até ele por âncora.
+
+**Nenhum dos três guias do Formspree foi usado como está.** O guia React não se
+aplica (não há React). O guia Vanilla JS via CDN carrega
+`https://unpkg.com/@formspree/ajax@1`, o que quebraria a regra de não depender de
+rede de terceiro e obrigaria a afrouxar o `script-src` da CSP num site cujo
+argumento é controle de dado. O que está no ar é o guia **Basic HTML** — um
+`<form action method="POST">` de verdade — com cerca de trinta linhas de `fetch`
+próprio por cima, como aprimoramento progressivo:
+
+- **Com JavaScript:** `fetch` para o Formspree, mensagem de estado no lugar, sem
+  sair da página. O botão desabilita durante o envio e volta no fim, inclusive em
+  caso de erro.
+- **Sem JavaScript:** o POST nativo do formulário acontece normalmente e o campo
+  `_next` devolve o visitante para `/obrigado.html`.
+
+Campos: nome, e-mail corporativo, empresa e um texto livre opcional sobre o caso.
+São quatro porque a métrica é reunião qualificada, não volume de lead — cada
+campo a mais custa conversão, e `empresa` mais `caso` são os que qualificam.
+`_gotcha` é o honeypot antispam do Formspree: fora da tela, fora da ordem de
+tabulação e escondido do leitor de tela.
+
+A mensagem de erro vinda do Formspree é escrita com `textContent`, nunca
+`innerHTML` — é conteúdo de terceiro entrando na página.
 
 ## Decisões de construção
 
@@ -89,8 +118,10 @@ desliga a proteção nas configurações do projeto.
 
 Estas não são bugs. São decisões que a página carrega como `TODO` no HTML.
 
-1. **Link do CTA.** Hoje aponta para `mailto:contato@baluarte.com.br`. Precisa
-   de uma URL real de agenda — um CTA que não agenda zera a métrica da página.
+1. **`_next` do formulário aponta para o host da Vercel.** Quando o domínio
+   próprio entrar, atualizar o `value` do campo `_next` em `index.html`. Ele só
+   é usado por quem navega sem JavaScript; com JS o envio é por `fetch` e nunca
+   sai da página.
 2. **Dois links do rodapé pedem um clique de confirmação.** As quatro fontes
    estão linkadas. A página da ANPD foi verificada e as duas notas técnicas
    conferem com o título exato. Já `planalto.gov.br` e `fgv.br` recusaram
