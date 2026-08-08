@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BALUARTE — controle e trilha de auditoria para tráfego de IA</title>
+<meta name="description" content="BALUARTE fica entre a sua aplicação e os provedores de modelo. Detecta dado pessoal antes que a requisição saia, aplica a política que você definiu, e registra a trilha de auditoria.">
+<meta name="color-scheme" content="light">
+<meta property="og:title" content="BALUARTE">
+<meta property="og:description" content="Um prompt com CPF é uma transferência internacional de dado pessoal. BALUARTE fica no meio do caminho.">
+<meta property="og:locale" content="pt_BR">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   BALUARTE — landing de validação
+   Um acento só (âmbar), em duas profundidades.
+   Claro = o seu lado. Escuro = dentro do gateway.
+   Mono = coisa que a máquina produziu ou consumiu. Nunca prosa.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --paper:      #F2F3F5;
+  --ink:        #1A1F27;
+  --mist:       #5C6673;
+  --graphite:   #14181F;
+  --amber:      #E9A23B;  /* acento sobre escuro  — 8,2:1 */
+  --amber-deep: #8A5A00;  /* acento sobre claro   — 5,3:1 */
+
+  --line:       #D6D9DE;
+  --line-dark:  #2A313D;
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono",
+          "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --r: 4px;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --measure: 62ch;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+p { margin: 0; }
+a { color: var(--amber-deep); text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 2px solid var(--amber-deep);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.panel :focus-visible, .foot :focus-visible { outline-color: var(--amber); }
+
+.skip {
+  position: absolute; left: var(--gutter); top: -100px;
+  background: var(--graphite); color: var(--paper);
+  padding: 0.6rem 1rem; border-radius: var(--r); z-index: 10;
+}
+.skip:focus { top: 0.75rem; }
+
+/* ── estrutura ─────────────────────────────────────────────── */
+
+.wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
+
+section { padding-block: clamp(3.5rem, 9vw, 6.5rem); }
+section + section { border-top: 1px solid var(--line); }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-bottom: 1.75rem;
+}
+
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
+.lede { max-width: var(--measure); color: var(--ink); margin-top: 1.25rem; }
+.note { color: var(--mist); font-size: 0.9375rem; }
+
+/* ── cabeçalho ─────────────────────────────────────────────── */
+
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line);
+}
+.mark {
+  font-weight: 600; letter-spacing: 0.18em; font-size: 0.9375rem;
+  color: var(--ink); text-decoration: none;
+}
+
+/* ── botões ────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-block;
+  background: var(--graphite); color: var(--paper);
+  font: inherit; font-weight: 500;
+  padding: 0.7rem 1.15rem; border-radius: var(--r);
+  text-decoration: none; border: 1px solid var(--graphite);
+  transition: background 140ms ease;
+}
+.btn:hover { background: #222933; }
+.btn--sm { padding: 0.5rem 0.9rem; font-size: 0.9375rem; }
+.btn--lg { padding: 0.9rem 1.5rem; font-size: 1.0625rem; }
+
+.linky { color: var(--amber-deep); font-size: 0.9375rem; text-decoration: none; border-bottom: 1px solid currentColor; }
+.linky:hover { color: var(--ink); }
+
+/* ── hero ──────────────────────────────────────────────────── */
+
+.hero { padding-top: clamp(3rem, 7vw, 5rem); }
+.hero h1 {
+  font-size: clamp(1.75rem, 0.95rem + 3.6vw, 3.5rem);
+  max-width: 19ch;
+}
+.hero .lede { margin-top: 1.5rem; font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); }
+.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 1.5rem; margin-top: 2.25rem; }
+
+/* ── painel escuro: "dentro do gateway" ────────────────────── */
+
+.panel {
+  background: var(--graphite);
+  color: var(--paper);
+  border-radius: var(--r);
+  padding: clamp(1.1rem, 3.5vw, 2rem);
+}
+.panel-head {
+  display: flex; justify-content: space-between; gap: 0.75rem;
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.28vw, 0.75rem);
+  letter-spacing: 0.06em; color: rgba(242,243,245,0.7);
+  padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-dark);
+}
+.panel-head span:last-child { text-align: right; }
+
+/* ── elemento-assinatura: o plano de passagem ──────────────── */
+
+.plane { margin-top: clamp(2rem, 5vw, 3rem); }
+
+.stage {
+  position: relative;
+  padding-block: clamp(1.1rem, 3vw, 1.75rem);
+  padding-inline: 12px; /* trilho do plano: em 0% a linha para na margem, não sobre a letra */
+}
+
+.payload {
+  font-family: var(--mono);
+  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
+  line-height: 2.15;
+  margin: 0;
+}
+
+/* A largura é travada no maior dos dois estados, então trocar o conteúdo
+   nunca reflui o parágrafo. O fundo âmbar marca a região governada — ela
+   existe antes e depois do plano passar; o que muda é o que está dentro. */
+.pii {
+  --cut: 0px; /* estado inicial e fallback sem JS: prompt inteiro cru */
+  display: inline-grid;
+  align-items: baseline;
+  justify-items: center;
+  background: rgba(233,162,59,0.10);
+  border-bottom: 1px solid rgba(233,162,59,0.5);
+  border-radius: 2px 2px 0 0;
+}
+.pii > * { grid-row: 1; grid-column: 1; white-space: nowrap; }
+
+/* esquerda do plano = já passou pelo gateway; direita = ainda cru */
+.pii i {
+  font-style: normal; color: var(--amber); letter-spacing: 0.01em;
+  clip-path: inset(0 calc(100% - var(--cut)) 0 0);
+}
+.pii b { font-weight: inherit; clip-path: inset(0 0 0 var(--cut)); }
+
+/* a linha — bastião, não cadeado */
+.rule {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 2px; margin-left: -1px; background: var(--amber);
+  pointer-events: none;
+}
+.rule::before, .rule::after {
+  content: ""; position: absolute; left: 50%; width: 14px; height: 8px;
+  margin-left: -7px; background: var(--amber);
+}
+.rule::before { top: -8px;  clip-path: polygon(0 100%, 25% 0, 75% 0, 100% 100%); }
+.rule::after  { bottom: -8px; clip-path: polygon(0 0, 25% 100%, 75% 100%, 100% 0); }
+
+.ctrl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  margin: 0; padding: 0; opacity: 0; cursor: ew-resize;
+  -webkit-appearance: none; appearance: none; background: transparent;
+}
+.ctrl::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 100%; }
+.ctrl::-moz-range-thumb { width: 44px; height: 44px; border: 0; }
+.ctrl:focus-visible ~ .rule { box-shadow: 0 0 0 2px var(--graphite), 0 0 0 4px var(--amber); }
+
+.hint {
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(242,243,245,0.7);
+  margin-top: 0.35rem;
+}
+.hint kbd {
+  font: inherit; border: 1px solid var(--line-dark); border-radius: 3px;
+  padding: 0 0.3em; color: var(--paper);
+}
+.nojs {
+  display: none;
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(242,243,245,0.7);
+  margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
+}
+
+.audit {
+  margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
+  color: rgba(242,243,245,0.7);
+}
+#audit-body { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; }
+.audit b { font-weight: inherit; color: var(--amber); }
+.audit-label {
+  display: block; font-family: var(--mono); font-size: 0.6875rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(242,243,245,0.55); margin-top: 1rem;
+}
+
+.caption {
+  font-family: var(--mono); font-size: 0.75rem; color: var(--mist);
+  margin-top: 0.9rem;
+}
+
+/* ── listas de fatos ───────────────────────────────────────── */
+
+.facts { display: grid; gap: 2rem; margin-top: 2.5rem; }
+@media (min-width: 46em) { .facts { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+.fact h3 { font-size: 1.0625rem; }
+.fact p { margin-top: 0.6rem; color: var(--mist); font-size: 0.9375rem; }
+.fact .src { display: block; margin-top: 0.75rem; font-family: var(--mono); font-size: 0.75rem; color: var(--mist); }
+.nb { white-space: nowrap; } /* impede quebra em intervalos como 2026-2027 */
+
+/* ── o caminho de um prompt ────────────────────────────────── */
+
+.steps { margin-top: 2.75rem; display: grid; gap: 0; }
+.step {
+  display: grid; gap: 0.5rem 1.75rem;
+  padding-block: 1.75rem; border-top: 1px solid var(--line);
+}
+@media (min-width: 52em) {
+  .step { grid-template-columns: 4.5rem 15rem 1fr; align-items: start; }
+}
+.step-n { font-family: var(--mono); font-size: 0.8125rem; color: var(--amber-deep); letter-spacing: 0.08em; }
+.step h3 { font-size: 1.0625rem; }
+.step p { margin-top: 0.5rem; color: var(--mist); font-size: 0.9375rem; }
+.step-out {
+  font-family: var(--mono);
+  font-size: clamp(0.75rem, 0.68rem + 0.32vw, 0.8125rem);
+  line-height: 1.9; color: var(--ink);
+  background: #E7E9ED; border-radius: var(--r);
+  padding: 0.85rem 1rem; margin-top: 0.25rem;
+  overflow-x: auto;
+}
+.step-out em { font-style: normal; color: var(--amber-deep); }
+.step-out .dim { color: var(--mist); }
+
+/* ── diff de implantação ───────────────────────────────────── */
+
+.diff {
+  margin-top: 2.5rem; font-family: var(--mono);
+  font-size: clamp(0.75rem, 0.6rem + 0.75vw, 1.125rem);
+  line-height: 2; overflow-x: auto;
+}
+.diff div { white-space: nowrap; }
+.diff .minus { color: rgba(242,243,245,0.55); }
+.diff .plus { color: var(--amber); }
+.diff .sig { user-select: none; display: inline-block; width: 1.5em; }
+
+/* ── o que não fazemos ─────────────────────────────────────── */
+
+.limits { margin-top: 2.5rem; display: grid; gap: 0; }
+.limit { padding-block: 1.6rem; border-top: 1px solid var(--line); max-width: 76ch; }
+.limit h3 { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); max-width: 46ch; }
+.limit h3::before { content: "— "; color: var(--amber-deep); }
+.limit p { margin-top: 0.6rem; color: var(--mist); max-width: var(--measure); }
+
+/* ── fechamento ────────────────────────────────────────────── */
+
+.close h2 { max-width: 26ch; }
+.close .lede + .lede { margin-top: 1rem; }
+
+/* ── formulário ──────────────────────────────────────────── */
+
+.form { margin-top: 2.5rem; display: grid; gap: 1.1rem; max-width: 40rem; }
+@media (min-width: 40em) {
+  .form { grid-template-columns: 1fr 1fr; column-gap: 1.25rem; }
+  .field--wide, .form button, .form-status { grid-column: 1 / -1; }
+}
+.field { display: grid; gap: 0.35rem; }
+.field label { font-size: 0.9375rem; font-weight: 500; }
+.field .opt { color: var(--mist); font-weight: 400; }
+.form input, .form textarea {
+  font: inherit; color: var(--ink); background: #fff;
+  border: 1px solid #7E8794; /* 3,6:1 sobre branco — limite de campo precisa de contraste */
+  border-radius: var(--r); padding: 0.6rem 0.7rem; width: 100%;
+}
+.form textarea { resize: vertical; min-height: 5.5rem; }
+.form input:hover, .form textarea:hover { border-color: var(--ink); }
+.form button { justify-self: start; }
+.form button[disabled] { opacity: 0.55; cursor: progress; }
+
+/* honeypot: fora da tela, fora da ordem de tabulação, fora do leitor de tela */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.form-status { font-size: 0.9375rem; color: var(--ink); min-height: 1.4em; }
+.form-status:not(:empty) { border-left: 2px solid var(--amber-deep); padding-left: 0.7rem; }
+
+.foot {
+  background: var(--graphite); color: rgba(242,243,245,0.7);
+  font-size: 0.875rem; padding-block: 3rem;
+}
+.foot .mark { color: var(--paper); }
+.foot h3 {
+  font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(242,243,245,0.55);
+  font-weight: 400; margin-bottom: 0.75rem;
+}
+.foot-grid { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
+@media (min-width: 46em) { .foot-grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; } }
+.foot ul { list-style: none; margin: 0; padding: 0; }
+/* cor sozinha não é sinal de link acessível */
+.foot a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
+.foot li { line-height: 1.5; }
+.foot li + li { margin-top: 0.65rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+
+<noscript><style>
+  /* Sem JS o plano não tem como se mover: some com o controle e a linha,
+     e o leitor fica com o prompt cru — que é justamente a tese da página.
+     A versão transformada continua visível no passo 03. */
+  .ctrl, .rule, .hint, .audit-label, .audit { display: none; }
+  .nojs { display: block; }
+</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="wrap top">
+  <a class="mark" href="#">BALUARTE</a>
+  <a class="btn btn--sm" href="#agendar">Agendar 20 minutos</a>
+</header>
+
+<main id="conteudo">
+
+  <!-- ── 1. HERO ──────────────────────────────────────────── -->
+  <section class="wrap hero">
+    <h1>Um prompt com CPF é uma transferência internacional de dado pessoal.</h1>
+
+    <p class="lede">
+      É o que diz o art. 33 da LGPD. Acontece toda vez que alguém na sua empresa
+      cola um contrato, um prontuário ou uma planilha de clientes num chat de IA
+      hospedado fora do Brasil. Quase nunca há base legal registrada. E não há log
+      para reconstruir o que saiu.
+    </p>
+
+    <p class="lede">
+      BALUARTE fica no meio do caminho.
+    </p>
+
+    <div class="hero-cta">
+      <a class="btn btn--lg" href="#agendar">Agendar 20 minutos</a>
+      <a class="linky" href="#limites">Ver o que não fazemos ↓</a>
+    </div>
+
+    <!-- ELEMENTO-ASSINATURA: o plano de passagem -->
+    <div class="plane panel">
+      <div class="panel-head">
+        <span>o que sai da empresa</span>
+        <span>o que foi escrito</span>
+      </div>
+
+      <div class="stage" id="stage">
+        <p class="payload">Analise a proposta de renegociação para <span class="pii"><b>Marina Alves</b><i>«NOME:4c1e»</i></span>, CPF <span class="pii"><b>111.444.777-35</b><i>«CPF:7f3a»</i></span>, e-mail <span class="pii"><b>marina@vetorcred.com.br</b><i>«EMAIL:b9024f»</i></span>, com saldo devedor de R$ 84.200 em 14 parcelas.</p>
+        <input class="ctrl" id="ctrl" type="range" min="0" max="1000" value="0" step="1"
+               aria-label="Plano de passagem: arraste para a direita para aplicar a política ao prompt">
+        <div class="rule" id="rule" aria-hidden="true"></div>
+      </div>
+
+      <p class="hint" aria-hidden="true">arraste o plano para a direita · ou use <kbd>←</kbd> <kbd>→</kbd></p>
+
+      <span class="audit-label">trilha de auditoria</span>
+      <p class="audit" id="audit" role="status">
+        <span id="audit-body"><span>aguardando tráfego</span></span>
+      </p>
+
+      <p class="nojs">
+        O plano de passagem precisa de JavaScript para se mover. Acima está o
+        prompt como a sua aplicação escreveu. O que sai depois da política está
+        no passo 03, mais abaixo.
+      </p>
+    </div>
+
+    <p class="caption">
+      CPF 111.444.777-35 é o valor de teste público usado na documentação técnica
+      brasileira. Passa na validação de dígito verificador e não pertence a ninguém.
+    </p>
+  </section>
+
+  <!-- ── 2. O PROBLEMA ────────────────────────────────────── -->
+  <section class="wrap">
+    <p class="eyebrow">O problema</p>
+    <h2>A transferência já acontece. A base legal quase nunca existe.</h2>
+
+    <p class="lede">
+      O art. 33 da Lei 13.709/2018 só permite transferir dado pessoal para fora do
+      país em hipóteses específicas — entre elas, país com grau de proteção adequado,
+      cláusulas contratuais padrão aprovadas pela ANPD, ou consentimento específico e
+      destacado do titular. Enviar um prompt com dado de cliente para uma API
+      hospedada nos Estados Unidos é uma dessas transferências. Ela raramente aparece
+      no registro de operações de tratamento.
+    </p>
+
+    <div class="facts">
+      <div class="fact">
+        <h3>Sete plataformas, catorze critérios, nenhuma cumpre todos.</h3>
+        <p>
+          O Centro de Tecnologia e Sociedade da FGV Direito Rio avaliou a documentação
+          de sete plataformas de IA generativa — ChatGPT, Gemini, Claude, Copilot,
+          Grok, DeepSeek e Meta AI — contra catorze critérios extraídos do Guia de
+          Segurança da Informação para Agentes de Tratamento de Pequeno Porte,
+          publicado pela ANPD em 2021. Nenhuma cumpre os catorze. Só três critérios
+          são cumpridos por todas: ter política de privacidade publicada, identificar
+          o controlador e informar quais dados são coletados. DeepSeek cumpre cinco;
+          Grok, seis.
+        </p>
+        <span class="src">fonte: CTS/FGV Direito Rio — IA Generativa e LGPD</span>
+      </div>
+
+      <div class="fact">
+        <h3>As melhores avaliadas também não dizem para que país o dado vai.</h3>
+        <p>
+          Claude, Gemini e Meta AI foram as melhores no estudo, com onze dos catorze
+          critérios. Entre as falhas que restam está a falta de clareza sobre os
+          países para onde o dado é enviado. O BALUARTE integra o Claude, e dizemos
+          isso porque não muda o argumento: política de privacidade boa do provedor
+          não é a mesma coisa que base legal documentada da sua empresa para a
+          transferência. O art. 33 cobra a segunda.
+        </p>
+        <span class="src">fonte: CTS/FGV Direito Rio — IA Generativa e LGPD</span>
+      </div>
+
+      <div class="fact">
+        <h3>IA está entre os eixos de fiscalização da ANPD para <span class="nb">2026-2027</span>.</h3>
+        <p>
+          Em dezembro de 2025, a ANPD publicou o Mapa de Temas Prioritários do biênio
+          2026-2027, que traz inteligência artificial e tecnologias emergentes como um
+          dos eixos. Em 2026, a autoridade emitiu nota técnica sobre possíveis
+          violações à LGPD pelo sistema Grok.
+        </p>
+        <span class="src">fonte: ANPD — NT nº 54/2025/FIS/CGF e NT nº 1/2026/FIS/CGF</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3. O QUE ACONTECE HOJE ───────────────────────────── -->
+  <section class="wrap">
+    <p class="eyebrow">O que acontece hoje</p>
+    <h2>Três ausências, e todas aparecem na mesma hora.</h2>
+
+    <div class="facts">
+      <div class="fact">
+        <h3>Ninguém sabe o que saiu.</h3>
+        <p>
+          O conteúdo dos prompts não fica registrado em lugar nenhum. Quando o
+          encarregado pergunta que dado pessoal a empresa enviou para IA no último
+          trimestre, a resposta é uma estimativa.
+        </p>
+      </div>
+      <div class="fact">
+        <h3>A base legal não está documentada.</h3>
+        <p>
+          A transferência acontece dezenas de vezes por dia. O fundamento jurídico
+          dela costuma existir só como suposição de que o contrato do provedor
+          resolve.
+        </p>
+      </div>
+      <div class="fact">
+        <h3>Não dá para reconstruir depois.</h3>
+        <p>
+          Sem trilha, um pedido de titular pelo art. 18 ou uma fiscalização da ANPD
+          viram exercício de memória. Quem responde é a pessoa que lembra, não o
+          sistema.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4. O CAMINHO DE UM PROMPT ────────────────────────── -->
+  <section class="wrap">
+    <p class="eyebrow">O caminho de um prompt</p>
+    <h2>O mesmo prompt de lá de cima, do começo ao fim.</h2>
+    <p class="lede">
+      Quatro passos. Nenhum deles depende de a sua equipe mudar como escreve prompt.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-n">01</span>
+        <div>
+          <h3>Detecta</h3>
+          <p>
+            Formato e dígito verificador para CPF, CNPJ, CNS, e-mail, telefone e CEP.
+            Contexto para nome próprio e endereço.
+          </p>
+        </div>
+        <div class="step-out">
+          <span class="dim">achado</span> nome    <span class="dim">·</span> confiança 0.82 <span class="dim">·</span> posição 42<br>
+          <span class="dim">achado</span> cpf     <span class="dim">·</span> confiança 0.99 <span class="dim">·</span> posição 61 <span class="dim">·</span> dv válido<br>
+          <span class="dim">achado</span> e-mail  <span class="dim">·</span> confiança 0.99 <span class="dim">·</span> posição 84
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-n">02</span>
+        <div>
+          <h3>Aplica a política</h3>
+          <p>
+            A política é sua. Por classe de dado, por rota, por provedor de destino.
+            Três ações: mascarar, tokenizar ou bloquear.
+          </p>
+        </div>
+        <div class="step-out">
+          <span class="dim">regra</span> financeiro/renegociacao<br>
+          &nbsp;&nbsp;cpf, e-mail, nome <span class="dim">→</span> <em>tokenizar</em><br>
+          &nbsp;&nbsp;cartao, conta      <span class="dim">→</span> <em>bloquear</em><br>
+          &nbsp;&nbsp;destino permitido  <span class="dim">→</span> anthropic, openai
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-n">03</span>
+        <div>
+          <h3>Transforma</h3>
+          <p>
+            O token é reversível só do seu lado, com a sua chave. O provedor recebe o
+            texto sem o dado — e a resposta volta com o valor original recomposto.
+          </p>
+        </div>
+        <div class="step-out">
+          Analise a proposta de renegociação para <em>«NOME:4c1e»</em>,<br>
+          CPF <em>«CPF:7f3a»</em>, e-mail <em>«EMAIL:b9024f»</em>, com saldo<br>
+          devedor de R$ 84.200 em 14 parcelas.
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-n">04</span>
+        <div>
+          <h3>Registra</h3>
+          <p>
+            Cada requisição vira uma linha imutável: quem chamou, o que foi detectado,
+            que política pegou, para onde foi. É o que vira o Dossiê de Conformidade.
+          </p>
+        </div>
+        <div class="step-out">
+          <span class="dim">ts</span>        2026-08-08T14:22:07-03:00<br>
+          <span class="dim">ator</span>      svc-credito / api-key ••7c41<br>
+          <span class="dim">achados</span>   3 <span class="dim">(nome, cpf, e-mail)</span><br>
+          <span class="dim">politica</span>  financeiro/renegociacao <span class="dim">→</span> tokenizar<br>
+          <span class="dim">destino</span>   anthropic <span class="dim">·</span> us-east<br>
+          <span class="dim">hash</span>      sha256:9f2c1a7e…
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. IMPLANTAÇÃO ───────────────────────────────────── -->
+  <section class="wrap">
+    <p class="eyebrow">Implantação</p>
+    <h2>Uma linha de configuração.</h2>
+
+    <div class="panel">
+      <div class="diff">
+        <!-- TODO(publicação): gw.baluarte.com.br é placeholder até a busca INPI e o registro do domínio. -->
+        <div class="minus"><span class="sig">−</span>base_url = "https://api.anthropic.com"</div>
+        <div class="plus"><span class="sig">+</span>base_url = "https://gw.baluarte.com.br/anthropic"</div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top:2rem">
+      O resto do seu código não muda. Você continua usando o SDK oficial do provedor,
+      com as mesmas chamadas e a mesma assinatura de método. A chave da conta passa a
+      viver no BALUARTE, e a sua aplicação autentica contra o gateway.
+    </p>
+    <p class="lede note" style="margin-top:1rem">
+      Hoje isso vale para as APIs de Anthropic, OpenAI e Google. Se o provedor que
+      você usa não está nessa lista, fale com a gente antes de contratar — não depois.
+    </p>
+  </section>
+
+  <!-- ── 6. O QUE NÃO FAZEMOS ─────────────────────────────── -->
+  <section class="wrap" id="limites">
+    <p class="eyebrow">O que não fazemos</p>
+    <h2>Os limites, ditos antes de você perguntar.</h2>
+
+    <div class="limits">
+      <div class="limit">
+        <h3>BALUARTE não deixa a sua empresa em conformidade com a LGPD.</h3>
+        <p>
+          Conformidade é uma decisão do seu encarregado de dados, sustentada por base
+          legal, política interna e processo. Nós entregamos controle técnico e trilha
+          de evidência. É o que o encarregado usa para decidir. Não é a decisão.
+        </p>
+      </div>
+
+      <div class="limit">
+        <h3>Rotear por servidor no Brasil não elimina a exposição ao CLOUD Act.</h3>
+        <p>
+          Se o destino final da requisição continua sendo um provedor americano, a
+          jurisdição americana continua alcançando o dado — mesmo com o tráfego
+          passando por São Paulo. O ganho real vem do mascaramento, da tokenização, ou
+          do roteamento para um modelo hospedado no Brasil. Quem vende o contrário
+          está vendendo geografia, não proteção.
+        </p>
+      </div>
+
+      <div class="limit">
+        <h3>Não detectamos todo dado pessoal.</h3>
+        <p>
+          Detecção erra nos dois sentidos: deixa passar e marca o que não era.
+          CPF, CNPJ, CNS, e-mail, telefone e CEP têm formato e dígito verificador —
+          esses saem com confiança alta. Nome próprio, endereço e dado clínico em texto
+          corrido são bem mais difíceis. É por isso que a política tem modo de
+          bloqueio, e é por isso que a trilha existe.
+        </p>
+      </div>
+
+      <div class="limit">
+        <h3>Não emitimos parecer jurídico.</h3>
+        <p>
+          Não somos escritório de advocacia. O Dossiê de Conformidade é evidência
+          técnica do que aconteceu com o tráfego da sua empresa. A leitura jurídica
+          dessa evidência é do seu time ou do seu escritório.
+        </p>
+      </div>
+
+      <div class="limit">
+        <h3>Não usamos o seu tráfego para treinar nada.</h3>
+        <p>
+          Nem modelo nosso, nem de terceiro. Mantemos contrato de não-treinamento com
+          cada provedor integrado, verificado antes de a integração entrar em produção
+          e revisado a cada trimestre — porque essas políticas mudam.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 7. FECHAMENTO ────────────────────────────────────── -->
+  <section class="wrap close" id="agendar">
+    <h2>20 minutos, com quem construiu.</h2>
+
+    <p class="lede">
+      Traga um caso real de tráfego — um prompt que a sua equipe manda de verdade. A
+      gente mostra o que a política faria com ele, campo por campo, e a linha que
+      entraria na trilha. Sem slide e sem apresentação institucional.
+    </p>
+    <p class="lede">
+      Se ficar claro que não serve para o seu caso, a call termina em dez minutos e a
+      gente diz por quê.
+    </p>
+
+    <form class="form" id="form-agendar" action="https://formspree.io/f/mppaqlvp" method="POST">
+      <input type="hidden" name="_subject" value="BALUARTE — pedido de 20 minutos">
+      <!-- TODO(domínio): _next aponta para o host atual. Atualizar quando o domínio próprio entrar. -->
+      <input type="hidden" name="_next" value="https://baluarte-teal.vercel.app/obrigado.html">
+
+      <p class="hp" aria-hidden="true">
+        <label>Deixe este campo em branco
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+        </label>
+      </p>
+
+      <div class="field">
+        <label for="f-nome">Nome</label>
+        <input id="f-nome" name="nome" type="text" autocomplete="name" required>
+      </div>
+
+      <div class="field">
+        <label for="f-email">E-mail corporativo</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <div class="field field--wide">
+        <label for="f-empresa">Empresa</label>
+        <input id="f-empresa" name="empresa" type="text" autocomplete="organization" required>
+      </div>
+
+      <div class="field field--wide">
+        <label for="f-caso">O caso que você quer trazer <span class="opt">(opcional)</span></label>
+        <textarea id="f-caso" name="caso" rows="3"
+                  placeholder="Que tipo de dado sai da sua empresa hoje em prompts de IA?"></textarea>
+      </div>
+
+      <button class="btn btn--lg" type="submit">Agendar 20 minutos</button>
+
+      <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span class="mark">BALUARTE</span>
+    <div class="foot-grid">
+      <div>
+        <h3>Fontes</h3>
+        <ul>
+          <li>
+            <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm">Lei
+            13.709/2018 (LGPD), art. 33</a> — transferência internacional de dados
+          </li>
+          <li>
+            <a href="https://direitorio.fgv.br/conhecimento/livrosia-generativa-e-lgpd-transparencia-desafios-regulatorios-e-caminhos-para">CTS/FGV
+            Direito Rio — IA Generativa e LGPD</a>
+          </li>
+          <li>
+            <a href="https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos">ANPD
+            — Nota Técnica nº 54/2025/FIS/CGF/ANPD</a>, Mapa de Temas Prioritários do
+            biênio <span class="nb">2026-2027</span>
+          </li>
+          <li>
+            <a href="https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos">ANPD
+            — Nota Técnica nº 1/2026/FIS/CGF/ANPD</a>, sistema Grok
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contato</h3>
+        <ul>
+          <!-- TODO(constituição): CNPJ e endereço quando a SLU sair. -->
+          <li><a href="mailto:contato@baluarte.com.br">contato@baluarte.com.br</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var stage = document.getElementById('stage');
+  var ctrl  = document.getElementById('ctrl');
+  var rule  = document.getElementById('rule');
+  var body  = document.getElementById('audit-body');
+  if (!stage || !ctrl || !rule || !body) return;
+
+  var spans = Array.prototype.slice.call(stage.querySelectorAll('.pii'));
+  var total = spans.length;
+
+  // Timestamp fixo, capturado uma vez: a linha de auditoria não deve tremer
+  // enquanto o leitor arrasta o plano.
+  var t = new Date();
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  var stamp = pad(t.getHours()) + ':' + pad(t.getMinutes()) + ':' + pad(t.getSeconds());
+
+  var hashes = ['—', '3b81e4c0', '7d40af19', '9f2c1a7e'];
+
+  function render() {
+    var frac = ctrl.value / ctrl.max;
+    var planeX = frac * stage.clientWidth;
+    var done = 0;
+
+    for (var i = 0; i < total; i++) {
+      var s = spans[i];
+      var w = s.offsetWidth;
+      var cut = planeX - s.offsetLeft;
+      if (cut < 0) cut = 0;
+      if (cut > w) cut = w;
+      s.style.setProperty('--cut', cut + 'px');
+      if (cut >= w / 2) done++;
+    }
+
+    rule.style.left = (frac * 100) + '%';
+    ctrl.setAttribute('aria-valuetext',
+      total + ' dados pessoais detectados, ' + done + ' já transformados em token');
+
+    // A detecção não depende da posição do plano: são sempre 3 achados.
+    // O que a trilha registra progressivamente é quantos foram transformados.
+    if (done === 0) {
+      body.innerHTML = '<span>aguardando tráfego</span>';
+    } else {
+      body.innerHTML =
+        '<span>' + stamp + '</span>' +
+        '<span>politica=<b>tokenizar</b></span>' +
+        '<span>' + total + ' achados</span>' +
+        '<span><b>' + done + '</b> transformados</span>' +
+        '<span>destino=anthropic</span>' +
+        '<span>sha256:' + hashes[done] + '…</span>';
+    }
+  }
+
+  ctrl.addEventListener('input', render);
+
+  // offsetLeft/offsetWidth mudam quando o texto reflui; recalcula na mudança
+  // de tamanho, sem observar durante o arrasto.
+  if (window.ResizeObserver) {
+    new ResizeObserver(render).observe(stage);
+  } else {
+    window.addEventListener('resize', render);
+  }
+
+  render();
+})();
+
+// ── Envio do formulário ─────────────────────────────────────────────
+// Sem biblioteca e sem CDN: o guia AJAX do Formspree carrega um script de
+// unpkg.com, o que quebraria a regra de não depender de rede de terceiro e
+// exigiria afrouxar o script-src da CSP. Isto aqui é aprimoramento
+// progressivo: sem JS (ou sem fetch), o POST normal do <form> acontece e o
+// _next devolve o visitante para /obrigado.html.
+(function () {
+  "use strict";
+
+  var form = document.getElementById('form-agendar');
+  if (!form || !window.fetch || !window.FormData) return;
+
+  var status = document.getElementById('form-status');
+  var btn = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    status.textContent = 'enviando…';
+    btn.disabled = true;
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(function (res) {
+      if (res.ok) {
+        form.reset();
+        status.textContent =
+          'Recebido. Respondo em até um dia útil, com dois ou três horários.';
+        return;
+      }
+      return res.json().then(function (data) {
+        var msg = (data && data.errors || []).map(function (e) { return e.message; }).join('; ');
+        throw new Error(msg || 'o formulário não aceitou o envio');
+      });
+    }).catch(function (err) {
+      // textContent, nunca innerHTML: a mensagem vem de fora.
+      status.textContent =
+        'Não consegui enviar — ' + err.message +
+        '. Escreva direto para contato@baluarte.com.br.';
+    }).then(function () {
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
