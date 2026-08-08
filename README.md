@@ -1,4 +1,26 @@
-# BALUARTE — landing page de validação
+# BALUARTE
+
+Gateway de IA com motor de conformidade LGPD. Proxy entre a aplicação do cliente
+e os provedores de modelo, que detecta dado pessoal antes que a requisição saia,
+aplica a política configurada e registra a trilha de auditoria.
+
+Este repositório contém hoje **a landing page de validação** e **os documentos
+operacionais** que guiam a construção do resto.
+
+| O quê | Onde |
+|---|---|
+| Contexto persistente lido a cada sessão do Claude Code | [`CLAUDE.md`](CLAUDE.md) |
+| Documentos operacionais — produto, marca, comercial, jurídico | [`docs/`](docs/README.md) |
+| Registro de fatos verificados e refutados | [`docs/fontes.md`](docs/fontes.md) |
+| Prompts de build por fase | [`docs/playbooks/construcao.md`](docs/playbooks/construcao.md) |
+| Landing page | `index.html`, `obrigado.html`, `vercel.json` |
+
+**Estado:** landing no ar em <https://baluarte-teal.vercel.app>. O gateway ainda
+não começou — o próximo passo é a Fase 0 do playbook de construção.
+
+---
+
+## Landing page de validação
 
 Página de validação comercial. Sem framework, sem build e sem dependência de
 rede de terceiro — o único destino externo é o endpoint do Formspree, para onde
@@ -138,16 +160,11 @@ Estas não são bugs. São decisões que a página carrega como `TODO` no HTML.
 
 ## Fontes citadas
 
-Toda afirmação factual da página é rastreável a uma destas:
+Toda afirmação factual da página é rastreável ao registro em
+[`docs/fontes.md`](docs/fontes.md) — que é a **única** lista de fatos do projeto.
 
-- [Lei 13.709/2018 (LGPD), art. 33](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
-- [CTS/FGV Direito Rio — *IA Generativa e LGPD*](https://direitorio.fgv.br/conhecimento/livrosia-generativa-e-lgpd-transparencia-desafios-regulatorios-e-caminhos-para)
-- [ANPD — Nota Técnica nº 54/2025/FIS/CGF/ANPD](https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos), Mapa de Temas Prioritários 2026-2027
-- [ANPD — Nota Técnica nº 1/2026/FIS/CGF/ANPD](https://www.gov.br/anpd/pt-br/centrais-de-conteudo/documentos-tecnicos-orientativos), sistema Grok
-
-Uma afirmação que constava de rascunhos anteriores — multa de 450 mil euros
-aplicada pela autoridade austríaca a uma fintech de Viena por uso de API de IA
-americana — **não se sustenta em fonte primária e foi removida.** Não reintroduza.
+Não duplicar a lista aqui. Duas fontes de verdade sobre fatos é exatamente como
+uma citação refutada volta por um caminho lateral, e já perdemos uma assim.
 
 ## Restrições de marca respeitadas
 
