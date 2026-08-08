@@ -1,0 +1,13 @@
+<svg viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BALUARTE">
+<defs>
+<linearGradient id="pnl" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0%" stop-color="#3A4247"/><stop offset="100%" stop-color="#1B2124"/></linearGradient>
+<linearGradient id="bm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F5A623" stop-opacity="0.62"/><stop offset="55%" stop-color="#F5A623" stop-opacity="0.22"/><stop offset="100%" stop-color="#F5A623" stop-opacity="0"/></linearGradient>
+<radialGradient id="gl" cx="0.5" cy="0.52" r="0.5"><stop offset="0%" stop-color="#F5A623" stop-opacity="0.45"/><stop offset="100%" stop-color="#F5A623" stop-opacity="0"/></radialGradient>
+</defs>
+<polygon points="142,200 178,200 222,300 98,300" fill="url(#bm)"/>
+<polygon points="30,60 134,96 134,196 30,224" fill="url(#pnl)"/>
+<polygon points="290,60 186,96 186,196 290,224" fill="url(#pnl)"/>
+<rect x="140.5" y="52" width="9" height="168" fill="#5B656A"/>
+<rect x="155.5" y="44" width="9" height="176" fill="#F5A623"/>
+<rect x="170.5" y="52" width="9" height="168" fill="#5B656A"/>
+</svg>
