@@ -17,6 +17,45 @@ open index.html
 É um arquivo estático. Abre por duplo clique, funciona em `file://`, não
 precisa de servidor. Para publicar, suba o arquivo em qualquer host estático.
 
+## Deploy
+
+Projeto `baluarte` na Vercel, time `hsantiagodebem-5408s-projects`.
+
+O site é estático: sem build, sem framework, sem instalação de dependência.
+O `vercel.json` só define cabeçalhos de resposta.
+
+**Cabeçalhos aplicados** (confirmados na resposta real do deploy):
+
+| Cabeçalho | Valor |
+|---|---|
+| `Content-Security-Policy` | `default-src 'none'` com `style-src`/`script-src` em `'self' 'unsafe-inline'`, mais `base-uri`, `form-action`, `frame-ancestors` e `object-src` em `'none'` |
+| `X-Content-Type-Options` | `nosniff` |
+| `X-Frame-Options` | `DENY` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | câmera, microfone, geolocalização, pagamento, USB e sensores desligados |
+
+Duas decisões que valem explicação, já que o produto vende disciplina de dado:
+
+- **`'unsafe-inline'` em `script-src` e `style-src` é deliberado.** A página é um
+  arquivo só, com CSS e JS embutidos e zero recurso externo. Fixar o hash de cada
+  bloco inline daria uma CSP mais estrita, mas quebraria a página em silêncio a
+  cada ajuste de texto — o script para de rodar, ou o estilo some inteiro. Numa
+  landing editada com frequência, esse é um risco pior que o ganho. Não há
+  entrada de usuário nem conteúdo de terceiro em lugar nenhum da página, então a
+  superfície de XSS que o hash fecharia é nula. As diretivas que de fato importam
+  aqui (`default-src 'none'`, `frame-ancestors 'none'`, `base-uri 'none'`,
+  `object-src 'none'`) estão fechadas.
+- **`Strict-Transport-Security` não está no `vercel.json`.** A Vercel já envia
+  HSTS com `max-age` maior e `preload`. Declarar o nosso criava dois cabeçalhos
+  HSTS na mesma resposta, com o valor mais fraco na frente — exatamente o tipo de
+  achado que aparece num scan de cabeçalhos.
+
+**Proteção de deploy:** o projeto está com Vercel Authentication (SSO) ligada
+para tudo que não seja domínio próprio. Isso significa que a URL de preview
+**não abre para quem não estiver logado no time.** Para mandar a página a um
+prospect, ou se gera um link temporário de compartilhamento na Vercel, ou se
+desliga a proteção nas configurações do projeto.
+
 ## Decisões de construção
 
 - **Sem webfont.** A página usa a stack de fontes nativa do sistema. Nada
