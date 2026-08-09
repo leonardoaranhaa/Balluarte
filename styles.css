@@ -98,7 +98,8 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 
 .top {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line);
+  flex-wrap: wrap; gap: 0.85rem 1rem;
+  padding-block: 1.25rem; border-bottom: 1px solid var(--line);
 }
 /* Os lockups trazem a área de respiro embutida na placa. Como a placa é
    exatamente --paper (ou --graphite, no rodapé), esse respiro é invisível:
@@ -106,11 +107,30 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 /* Todas as regras de display ficam na mesma especificidade (0-1-0) para que a
    ordem e as media queries decidam. `.mark img { display: block }` venceria
    `.mark--full { display: none }` e as queries nunca aplicariam. */
-.mark { display: inline-flex; text-decoration: none; }
+.mark { display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none; color: var(--ink); }
 .mark--full { display: block; width: 210px; height: auto; } /* arte ~187px: acima do mínimo de 180px do guia */
-.mark--icon { display: block; width: 34px; height: auto; }
-@media (max-width: 29.99em) { .mark--full { display: none; } }
-@media (min-width: 30em)    { .mark--icon { display: none; } }
+.mark--icon { display: block; width: 30px; height: auto; }
+
+/* Abaixo de 180px de largura o guia manda usar só o símbolo (§ tamanho
+   mínimo), e é o que acontece em qualquer telefone: ao lado do botão não
+   sobram 180px. Só que aí a marca fica sem nome na tela onde a maior parte
+   das visitas acontece. O wordmark desenhado não pode encolher, mas o nome
+   escrito pode — entra como texto vivo, no tipo da página, e some quando o
+   lockup volta a caber e a trazer o wordmark de novo. */
+.mark-nome {
+  display: none;
+  font-weight: 700; font-size: 0.9375rem;
+  letter-spacing: 0.09em; line-height: 1;
+}
+
+@media (max-width: 29.99em) {
+  .mark--full { display: none; }
+  .mark-nome  { display: block; }
+  /* Só o suficiente para o nome e o botão dividirem uma linha a 360px. A
+     altura do alvo de toque não muda: o que encolhe é o respiro lateral. */
+  .top .btn--sm { font-size: 0.875rem; padding-inline: 0.7rem; }
+}
+@media (min-width: 30em) { .mark--icon { display: none; } }
 
 /* ── botões ────────────────────────────────────────────────── */
 
