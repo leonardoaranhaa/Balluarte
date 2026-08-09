@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,373 +10,10 @@
 <meta property="og:description" content="Um prompt com CPF é uma transferência internacional de dado pessoal. BALUARTE fica no meio do caminho.">
 <meta property="og:locale" content="pt_BR">
 
-<link rel="icon" href="/favicon/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon/favicon-dark.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
+<link rel="icon" href="/favicon/favicon-32.png" sizes="32x32" type="image/png">
 <meta name="theme-color" content="#0E1113">
-<style>
-/* ─────────────────────────────────────────────────────────────
-   BALUARTE — landing de validação
-   Um acento só (âmbar), em duas profundidades.
-   Claro = o seu lado. Escuro = dentro do gateway.
-   Mono = coisa que a máquina produziu ou consumiu. Nunca prosa.
-   ───────────────────────────────────────────────────────────── */
-
-:root {
-  /* Paleta oficial do guia da marca. Os hex de --paper e --graphite não são
-     negociáveis: os lockups do logo trazem placa de fundo embutida nessas
-     duas cores exatas, e qualquer desvio cria emenda visível em volta. */
-  --paper:      #E6E6E6;  /* neutro claro  — placa dos lockups "light" */
-  --graphite:   #0E1113;  /* base escura   — placa dos lockups "dark"  */
-  --amber:      #F5A623;  /* acento        — 9,4:1 sobre --graphite    */
-
-  --ink:        #0E1113;  /* texto sobre claro — 15,2:1 */
-  --mist:       #5A6063;  /* texto secundário  —  5,1:1 */
-
-  /* O guia indica #B8770F para âmbar sobre fundo claro, mas medido dá 2,96:1
-     sobre --paper: reprova AA até para texto grande. Serve dentro do logo,
-     onde a WCAG isenta marca; não serve para texto da página. Este valor é o
-     equivalente escuro que passa — 5,4:1. Ver docs/guia-da-marca.md. */
-  --amber-deep: #7E5200;
-
-  --line:       #CFD1D2;
-  --line-dark:  #262A2C;
-
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono",
-          "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
-
-  --r: 4px;
-  --gutter: clamp(1.25rem, 5vw, 3rem);
-  --measure: 62ch;
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  overflow-wrap: break-word;
-}
-
-h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
-p { margin: 0; }
-a { color: var(--amber-deep); text-underline-offset: 3px; }
-
-:focus-visible {
-  outline: 2px solid var(--amber-deep);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-.panel :focus-visible, .foot :focus-visible { outline-color: var(--amber); }
-
-.skip {
-  position: absolute; left: var(--gutter); top: -100px;
-  background: var(--graphite); color: var(--paper);
-  padding: 0.6rem 1rem; border-radius: var(--r); z-index: 10;
-}
-.skip:focus { top: 0.75rem; }
-
-/* ── estrutura ─────────────────────────────────────────────── */
-
-.wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
-
-section { padding-block: clamp(3.5rem, 9vw, 6.5rem); }
-section + section { border-top: 1px solid var(--line); }
-
-.eyebrow {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--mist);
-  margin-bottom: 1.75rem;
-}
-
-h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
-.lede { max-width: var(--measure); color: var(--ink); margin-top: 1.25rem; }
-.note { color: var(--mist); font-size: 0.9375rem; }
-
-/* ── cabeçalho ─────────────────────────────────────────────── */
-
-.top {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line);
-}
-/* Os lockups trazem a área de respiro embutida na placa. Como a placa é
-   exatamente --paper (ou --graphite, no rodapé), esse respiro é invisível:
-   o logo pode ser dimensionado com folga sem abrir buraco no layout. */
-/* Todas as regras de display ficam na mesma especificidade (0-1-0) para que a
-   ordem e as media queries decidam. `.mark img { display: block }` venceria
-   `.mark--full { display: none }` e as queries nunca aplicariam. */
-.mark { display: inline-flex; text-decoration: none; }
-.mark--full { display: block; width: 210px; height: auto; } /* arte ~187px: acima do mínimo de 180px do guia */
-.mark--icon { display: block; width: 34px; height: auto; }
-@media (max-width: 29.99em) { .mark--full { display: none; } }
-@media (min-width: 30em)    { .mark--icon { display: none; } }
-
-/* ── botões ────────────────────────────────────────────────── */
-
-.btn {
-  display: inline-block;
-  background: var(--graphite); color: var(--paper);
-  font: inherit; font-weight: 500;
-  padding: 0.7rem 1.15rem; border-radius: var(--r);
-  text-decoration: none; border: 1px solid var(--graphite);
-  transition: background 140ms ease;
-}
-.btn:hover { background: #20262A; }
-.btn--sm { padding: 0.5rem 0.9rem; font-size: 0.9375rem; }
-.btn--lg { padding: 0.9rem 1.5rem; font-size: 1.0625rem; }
-
-.linky { color: var(--amber-deep); font-size: 0.9375rem; text-decoration: none; border-bottom: 1px solid currentColor; }
-.linky:hover { color: var(--ink); }
-
-/* ── hero ──────────────────────────────────────────────────── */
-
-.hero { padding-top: clamp(3rem, 7vw, 5rem); }
-.hero h1 {
-  font-size: clamp(1.75rem, 0.95rem + 3.6vw, 3.5rem);
-  max-width: 19ch;
-}
-.hero .lede { margin-top: 1.5rem; font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); }
-.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 1.5rem; margin-top: 2.25rem; }
-
-/* ── painel escuro: "dentro do gateway" ────────────────────── */
-
-.panel {
-  background: var(--graphite);
-  color: var(--paper);
-  border-radius: var(--r);
-  padding: clamp(1.1rem, 3.5vw, 2rem);
-}
-.panel-head {
-  display: flex; justify-content: space-between; gap: 0.75rem;
-  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.28vw, 0.75rem);
-  letter-spacing: 0.06em; color: rgba(230,230,230,0.7);
-  padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-dark);
-}
-.panel-head span:last-child { text-align: right; }
-
-/* ── elemento-assinatura: o plano de passagem ──────────────── */
-
-.plane { margin-top: clamp(2rem, 5vw, 3rem); }
-
-.stage {
-  position: relative;
-  padding-block: clamp(1.1rem, 3vw, 1.75rem);
-  padding-inline: 12px; /* trilho do plano: em 0% a linha para na margem, não sobre a letra */
-}
-
-.payload {
-  font-family: var(--mono);
-  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
-  line-height: 2.15;
-  margin: 0;
-}
-
-/* A largura é travada no maior dos dois estados, então trocar o conteúdo
-   nunca reflui o parágrafo. O fundo âmbar marca a região governada — ela
-   existe antes e depois do plano passar; o que muda é o que está dentro. */
-.pii {
-  --cut: 0px; /* estado inicial e fallback sem JS: prompt inteiro cru */
-  display: inline-grid;
-  align-items: baseline;
-  justify-items: center;
-  background: rgba(245,166,35,0.12);
-  border-bottom: 1px solid rgba(245,166,35,0.55);
-  border-radius: 2px 2px 0 0;
-}
-.pii > * { grid-row: 1; grid-column: 1; white-space: nowrap; }
-
-/* esquerda do plano = já passou pelo gateway; direita = ainda cru */
-.pii i {
-  font-style: normal; color: var(--amber); letter-spacing: 0.01em;
-  clip-path: inset(0 calc(100% - var(--cut)) 0 0);
-}
-.pii b { font-weight: inherit; clip-path: inset(0 0 0 var(--cut)); }
-
-/* a linha — bastião, não cadeado */
-.rule {
-  position: absolute; top: 0; bottom: 0; left: 0;
-  width: 2px; margin-left: -1px; background: var(--amber);
-  pointer-events: none;
-}
-.rule::before, .rule::after {
-  content: ""; position: absolute; left: 50%; width: 14px; height: 8px;
-  margin-left: -7px; background: var(--amber);
-}
-.rule::before { top: -8px;  clip-path: polygon(0 100%, 25% 0, 75% 0, 100% 100%); }
-.rule::after  { bottom: -8px; clip-path: polygon(0 0, 25% 100%, 75% 100%, 100% 0); }
-
-.ctrl {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  margin: 0; padding: 0; opacity: 0; cursor: ew-resize;
-  -webkit-appearance: none; appearance: none; background: transparent;
-}
-.ctrl::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 100%; }
-.ctrl::-moz-range-thumb { width: 44px; height: 44px; border: 0; }
-.ctrl:focus-visible ~ .rule { box-shadow: 0 0 0 2px var(--graphite), 0 0 0 4px var(--amber); }
-
-.hint {
-  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
-  margin-top: 0.35rem;
-}
-.hint kbd {
-  font: inherit; border: 1px solid var(--line-dark); border-radius: 3px;
-  padding: 0 0.3em; color: var(--paper);
-}
-.nojs {
-  display: none;
-  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
-  margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
-}
-
-.audit {
-  margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
-  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
-  color: rgba(230,230,230,0.7);
-}
-#audit-body { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; }
-.audit b { font-weight: inherit; color: var(--amber); }
-.audit-label {
-  display: block; font-family: var(--mono); font-size: 0.6875rem;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(230,230,230,0.55); margin-top: 1rem;
-}
-
-.caption {
-  font-family: var(--mono); font-size: 0.75rem; color: var(--mist);
-  margin-top: 0.9rem;
-}
-
-/* ── listas de fatos ───────────────────────────────────────── */
-
-.facts { display: grid; gap: 2rem; margin-top: 2.5rem; }
-@media (min-width: 46em) { .facts { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
-.fact h3 { font-size: 1.0625rem; }
-.fact p { margin-top: 0.6rem; color: var(--mist); font-size: 0.9375rem; }
-.fact .src { display: block; margin-top: 0.75rem; font-family: var(--mono); font-size: 0.75rem; color: var(--mist); }
-.nb { white-space: nowrap; } /* impede quebra em intervalos como 2026-2027 */
-
-/* ── o caminho de um prompt ────────────────────────────────── */
-
-.steps { margin-top: 2.75rem; display: grid; gap: 0; }
-.step {
-  display: grid; gap: 0.5rem 1.75rem;
-  padding-block: 1.75rem; border-top: 1px solid var(--line);
-}
-@media (min-width: 52em) {
-  .step { grid-template-columns: 4.5rem 15rem 1fr; align-items: start; }
-}
-.step-n { font-family: var(--mono); font-size: 0.8125rem; color: var(--amber-deep); letter-spacing: 0.08em; }
-.step h3 { font-size: 1.0625rem; }
-.step p { margin-top: 0.5rem; color: var(--mist); font-size: 0.9375rem; }
-.step-out {
-  font-family: var(--mono);
-  font-size: clamp(0.75rem, 0.68rem + 0.32vw, 0.8125rem);
-  line-height: 1.9; color: var(--ink);
-  background: #DEE0E1; border-radius: var(--r);
-  padding: 0.85rem 1rem; margin-top: 0.25rem;
-  overflow-x: auto;
-}
-.step-out em { font-style: normal; color: var(--amber-deep); }
-.step-out .dim { color: var(--mist); }
-
-/* ── diff de implantação ───────────────────────────────────── */
-
-.diff {
-  margin-top: 2.5rem; font-family: var(--mono);
-  font-size: clamp(0.75rem, 0.6rem + 0.75vw, 1.125rem);
-  line-height: 2; overflow-x: auto;
-}
-.diff div { white-space: nowrap; }
-.diff .minus { color: rgba(230,230,230,0.55); }
-.diff .plus { color: var(--amber); }
-.diff .sig { user-select: none; display: inline-block; width: 1.5em; }
-
-/* ── o que não fazemos ─────────────────────────────────────── */
-
-.limits { margin-top: 2.5rem; display: grid; gap: 0; }
-.limit { padding-block: 1.6rem; border-top: 1px solid var(--line); max-width: 76ch; }
-.limit h3 { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); max-width: 46ch; }
-.limit h3::before { content: "— "; color: var(--amber-deep); }
-.limit p { margin-top: 0.6rem; color: var(--mist); max-width: var(--measure); }
-
-/* ── fechamento ────────────────────────────────────────────── */
-
-.close h2 { max-width: 26ch; }
-.close .lede + .lede { margin-top: 1rem; }
-
-/* ── formulário ──────────────────────────────────────────── */
-
-.form { margin-top: 2.5rem; display: grid; gap: 1.1rem; max-width: 40rem; }
-@media (min-width: 40em) {
-  .form { grid-template-columns: 1fr 1fr; column-gap: 1.25rem; }
-  .field--wide, .form button, .form-status { grid-column: 1 / -1; }
-}
-.field { display: grid; gap: 0.35rem; }
-.field label { font-size: 0.9375rem; font-weight: 500; }
-.field .opt { color: var(--mist); font-weight: 400; }
-.form input, .form textarea {
-  font: inherit; color: var(--ink); background: #fff;
-  border: 1px solid #7E8794; /* 3,6:1 sobre branco — limite de campo precisa de contraste */
-  border-radius: var(--r); padding: 0.6rem 0.7rem; width: 100%;
-}
-.form textarea { resize: vertical; min-height: 5.5rem; }
-.form input:hover, .form textarea:hover { border-color: var(--ink); }
-.form button { justify-self: start; }
-.form button[disabled] { opacity: 0.55; cursor: progress; }
-
-/* honeypot: fora da tela, fora da ordem de tabulação, fora do leitor de tela */
-.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-
-.form-status { font-size: 0.9375rem; color: var(--ink); min-height: 1.4em; }
-.form-status:not(:empty) { border-left: 2px solid var(--amber-deep); padding-left: 0.7rem; }
-
-.foot {
-  background: var(--graphite); color: rgba(230,230,230,0.7);
-  font-size: 0.875rem; padding-block: 3rem;
-}
-.foot .mark--full { display: block; width: 210px; }
-.foot h3 {
-  font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.14em;
-  text-transform: uppercase; color: rgba(230,230,230,0.55);
-  font-weight: 400; margin-bottom: 0.75rem;
-}
-.foot-grid { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
-@media (min-width: 46em) { .foot-grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; } }
-.foot ul { list-style: none; margin: 0; padding: 0; }
-/* cor sozinha não é sinal de link acessível */
-.foot a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
-.foot li { line-height: 1.5; }
-.foot li + li { margin-top: 0.65rem; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-</style>
-
-<noscript><style>
-  /* Sem JS o plano não tem como se mover: some com o controle e a linha,
-     e o leitor fica com o prompt cru — que é justamente a tese da página.
-     A versão transformada continua visível no passo 03. */
-  .ctrl, .rule, .hint, .audit-label, .audit { display: none; }
-  .nojs { display: block; }
-</style></noscript>
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
@@ -414,25 +51,82 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
       <a class="linky" href="#limites">Ver o que não fazemos ↓</a>
     </div>
 
-    <!-- ELEMENTO-ASSINATURA: o plano de passagem -->
-    <div class="plane panel">
-      <div class="panel-head">
-        <span>o que sai da empresa</span>
-        <span>o que foi escrito</span>
+    <!-- ELEMENTO-ASSINATURA: o plano de passagem, dentro de um chat de trabalho -->
+    <div class="plane panel" id="plane">
+      <!-- O caixote é decorativo: existe para situar o leitor num chat de
+           trabalho qualquer. O conteúdo que importa (prompt, trilha, resposta)
+           fica fora do aria-hidden. -->
+      <div class="chat" id="chat">
+        <div class="chat-bar" aria-hidden="true">
+          <span class="chat-dots"><i></i><i></i><i></i></span>
+          <span class="chat-title">assistente-interno · vetorcred</span>
+          <span class="chat-via">via BALUARTE</span>
+        </div>
+
+        <div class="chat-body">
+          <aside class="chat-side" aria-hidden="true">
+            <span class="side-new">＋ Nova conversa</span>
+            <span class="side-item side-item--on">Renegociação — carteira B</span>
+            <span class="side-item">Minuta de aditivo</span>
+            <span class="side-item">Régua de cobrança</span>
+            <span class="side-foot">MC · Marcos Cunha</span>
+          </aside>
+
+          <div class="chat-main">
+            <div class="panel-head">
+              <span>o que sai da empresa</span>
+              <span>o que foi escrito</span>
+            </div>
+
+            <!-- Um turno anterior sem dado pessoal nenhum. Serve para o leitor
+                 ver que a conversa é rotina de trabalho, e para o contraste com
+                 a mensagem seguinte ficar evidente: nem toda pergunta carrega
+                 dado de cliente, e o gateway só age nas que carregam. -->
+            <div class="msg msg--user msg--antes">
+              <p class="bubble">Qual é o desconto máximo que posso oferecer na carteira B?</p>
+            </div>
+            <div class="msg msg--bot msg--antes">
+              <span class="who" aria-hidden="true">IA</span>
+              <p class="bubble bubble--bot">Até 30% sobre juros e multa, sem tocar no principal. Acima disso precisa de aprovação do comitê de crédito.</p>
+            </div>
+
+            <div class="stage" id="stage">
+              <div class="msg msg--user msg--novo" id="msg-user">
+                <p class="bubble payload">Analise a proposta de renegociação para <span class="pii"><b>Marina Alves</b><i>«NOME:4c1e»</i></span>, CPF <span class="pii"><b>111.444.777-35</b><i>«CPF:7f3a»</i></span>, e-mail <span class="pii"><b>marina@vetorcred.com.br</b><i>«EMAIL:b9024f»</i></span>, com saldo devedor de R$ 84.200 em 14 parcelas.</p>
+              </div>
+              <input class="ctrl" id="ctrl" type="range" min="0" max="1000" value="0" step="1"
+                     aria-label="Plano de passagem: arraste para a direita para aplicar a política ao prompt">
+              <div class="rule" id="rule" aria-hidden="true"></div>
+            </div>
+
+            <p class="hint" id="hint">arraste o plano para a direita · ou use <kbd>←</kbd> <kbd>→</kbd></p>
+
+            <div class="msg msg--bot msg--resposta" id="msg-bot">
+              <span class="who" aria-hidden="true">IA</span>
+              <div class="bubble bubble--bot">
+                <span class="thinking" aria-hidden="true"><i></i><i></i><i></i></span>
+                <p class="answer" id="answer">Marina Alves tem R$ 84.200 em aberto. Em 14 parcelas, são R$ 6.014,29 por mês; alongando para 24, caem para R$ 3.508,33. A segunda opção cabe melhor no limite de comprometimento de renda da carteira.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <p class="composer-box" id="composer-box">
+            <span class="composer-ghost" id="composer-ghost">Pergunte alguma coisa</span><span id="typed"></span><span class="caret" id="caret" aria-hidden="true"></span>
+          </p>
+          <span class="send" aria-hidden="true">↑</span>
+        </div>
       </div>
 
-      <div class="stage" id="stage">
-        <p class="payload">Analise a proposta de renegociação para <span class="pii"><b>Marina Alves</b><i>«NOME:4c1e»</i></span>, CPF <span class="pii"><b>111.444.777-35</b><i>«CPF:7f3a»</i></span>, e-mail <span class="pii"><b>marina@vetorcred.com.br</b><i>«EMAIL:b9024f»</i></span>, com saldo devedor de R$ 84.200 em 14 parcelas.</p>
-        <input class="ctrl" id="ctrl" type="range" min="0" max="1000" value="0" step="1"
-               aria-label="Plano de passagem: arraste para a direita para aplicar a política ao prompt">
-        <div class="rule" id="rule" aria-hidden="true"></div>
-      </div>
-
-      <p class="hint" aria-hidden="true">arraste o plano para a direita · ou use <kbd>←</kbd> <kbd>→</kbd></p>
+      <p class="payoff" id="payoff">
+        O provedor recebeu <b>«NOME:4c1e»</b>. O nome volta na resposta, restituído
+        pelo gateway a partir do cofre de mapeamento do seu tenant.
+      </p>
 
       <span class="audit-label">trilha de auditoria</span>
       <p class="audit" id="audit" role="status">
-        <span id="audit-body"><span>aguardando tráfego</span></span>
+        <span id="audit-body"><span>--:--:--</span><span>politica=<b>tokenizar</b></span><span>— achados</span><span><b>—</b> transformados</span><span>destino=anthropic</span><span>sha256:————————…</span></span>
       </p>
 
       <p class="nojs">
@@ -443,8 +137,9 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
     </div>
 
     <p class="caption">
-      CPF 111.444.777-35 é o valor de teste público usado na documentação técnica
-      brasileira. Passa na validação de dígito verificador e não pertence a ninguém.
+      Empresa, pessoa e conversa são fictícias. O CPF 111.444.777-35 é o valor de
+      teste público usado na documentação técnica brasileira: passa na validação
+      de dígito verificador e não pertence a ninguém.
     </p>
   </section>
 
@@ -789,120 +484,7 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
   </div>
 </footer>
 
-<script>
-(function () {
-  "use strict";
-
-  var stage = document.getElementById('stage');
-  var ctrl  = document.getElementById('ctrl');
-  var rule  = document.getElementById('rule');
-  var body  = document.getElementById('audit-body');
-  if (!stage || !ctrl || !rule || !body) return;
-
-  var spans = Array.prototype.slice.call(stage.querySelectorAll('.pii'));
-  var total = spans.length;
-
-  // Timestamp fixo, capturado uma vez: a linha de auditoria não deve tremer
-  // enquanto o leitor arrasta o plano.
-  var t = new Date();
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  var stamp = pad(t.getHours()) + ':' + pad(t.getMinutes()) + ':' + pad(t.getSeconds());
-
-  var hashes = ['—', '3b81e4c0', '7d40af19', '9f2c1a7e'];
-
-  function render() {
-    var frac = ctrl.value / ctrl.max;
-    var planeX = frac * stage.clientWidth;
-    var done = 0;
-
-    for (var i = 0; i < total; i++) {
-      var s = spans[i];
-      var w = s.offsetWidth;
-      var cut = planeX - s.offsetLeft;
-      if (cut < 0) cut = 0;
-      if (cut > w) cut = w;
-      s.style.setProperty('--cut', cut + 'px');
-      if (cut >= w / 2) done++;
-    }
-
-    rule.style.left = (frac * 100) + '%';
-    ctrl.setAttribute('aria-valuetext',
-      total + ' dados pessoais detectados, ' + done + ' já transformados em token');
-
-    // A detecção não depende da posição do plano: são sempre 3 achados.
-    // O que a trilha registra progressivamente é quantos foram transformados.
-    if (done === 0) {
-      body.innerHTML = '<span>aguardando tráfego</span>';
-    } else {
-      body.innerHTML =
-        '<span>' + stamp + '</span>' +
-        '<span>politica=<b>tokenizar</b></span>' +
-        '<span>' + total + ' achados</span>' +
-        '<span><b>' + done + '</b> transformados</span>' +
-        '<span>destino=anthropic</span>' +
-        '<span>sha256:' + hashes[done] + '…</span>';
-    }
-  }
-
-  ctrl.addEventListener('input', render);
-
-  // offsetLeft/offsetWidth mudam quando o texto reflui; recalcula na mudança
-  // de tamanho, sem observar durante o arrasto.
-  if (window.ResizeObserver) {
-    new ResizeObserver(render).observe(stage);
-  } else {
-    window.addEventListener('resize', render);
-  }
-
-  render();
-})();
-
-// ── Envio do formulário ─────────────────────────────────────────────
-// Sem biblioteca e sem CDN: o guia AJAX do Formspree carrega um script de
-// unpkg.com, o que quebraria a regra de não depender de rede de terceiro e
-// exigiria afrouxar o script-src da CSP. Isto aqui é aprimoramento
-// progressivo: sem JS (ou sem fetch), o POST normal do <form> acontece e o
-// _next devolve o visitante para /obrigado.html.
-(function () {
-  "use strict";
-
-  var form = document.getElementById('form-agendar');
-  if (!form || !window.fetch || !window.FormData) return;
-
-  var status = document.getElementById('form-status');
-  var btn = form.querySelector('button[type="submit"]');
-
-  form.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    status.textContent = 'enviando…';
-    btn.disabled = true;
-
-    fetch(form.action, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
-    }).then(function (res) {
-      if (res.ok) {
-        form.reset();
-        status.textContent =
-          'Recebido. Respondo em até um dia útil, com dois ou três horários.';
-        return;
-      }
-      return res.json().then(function (data) {
-        var msg = (data && data.errors || []).map(function (e) { return e.message; }).join('; ');
-        throw new Error(msg || 'o formulário não aceitou o envio');
-      });
-    }).catch(function (err) {
-      // textContent, nunca innerHTML: a mensagem vem de fora.
-      status.textContent =
-        'Não consegui enviar — ' + err.message +
-        '. Escreva direto para contato@baluarte.com.br.';
-    }).then(function () {
-      btn.disabled = false;
-    });
-  });
-})();
-</script>
+<script src="/app.js" defer></script>
 
 </body>
 </html>

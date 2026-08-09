@@ -1,0 +1,558 @@
+/* ─────────────────────────────────────────────────────────────
+   BALUARTE — landing de validação
+   Um acento só (âmbar), em duas profundidades.
+   Claro = o seu lado. Escuro = dentro do gateway.
+   Mono = coisa que a máquina produziu ou consumiu. Nunca prosa.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Paleta oficial do guia da marca. Os hex de --paper e --graphite não são
+     negociáveis: os lockups do logo trazem placa de fundo embutida nessas
+     duas cores exatas, e qualquer desvio cria emenda visível em volta. */
+  --paper:      #E6E6E6;  /* neutro claro  — placa dos lockups "light" */
+  --graphite:   #0E1113;  /* base escura   — placa dos lockups "dark"  */
+  --amber:      #F5A623;  /* acento        — 9,4:1 sobre --graphite    */
+
+  --ink:        #0E1113;  /* texto sobre claro — 15,2:1 */
+  --mist:       #5A6063;  /* texto secundário  —  5,1:1 */
+
+  /* O guia indica #B8770F para âmbar sobre fundo claro, mas medido dá 2,96:1
+     sobre --paper: reprova AA até para texto grande. Serve dentro do logo,
+     onde a WCAG isenta marca; não serve para texto da página. Este valor é o
+     equivalente escuro que passa — 5,4:1. Ver docs/guia-da-marca.md. */
+  --amber-deep: #7E5200;
+
+  --line:       #CFD1D2;
+  --line-dark:  #262A2C;
+
+  /* Duas elevações acima de --graphite, só para o caixote do chat ter volume.
+     Não são cores de marca — são a mesma base clareada, e o âmbar continua
+     sendo o único acento. */
+  --surface:    #14181A;
+  --surface-2:  #1B2022;
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono",
+          "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --r: 4px;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --measure: 62ch;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+p { margin: 0; }
+a { color: var(--amber-deep); text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 2px solid var(--amber-deep);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.panel :focus-visible, .foot :focus-visible { outline-color: var(--amber); }
+
+.skip {
+  position: absolute; left: var(--gutter); top: -100px;
+  background: var(--graphite); color: var(--paper);
+  padding: 0.6rem 1rem; border-radius: var(--r); z-index: 10;
+}
+.skip:focus { top: 0.75rem; }
+
+/* ── estrutura ─────────────────────────────────────────────── */
+
+.wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: var(--gutter); }
+
+section { padding-block: clamp(3.5rem, 9vw, 6.5rem); }
+section + section { border-top: 1px solid var(--line); }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-bottom: 1.75rem;
+}
+
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
+.lede { max-width: var(--measure); color: var(--ink); margin-top: 1.25rem; }
+.note { color: var(--mist); font-size: 0.9375rem; }
+
+/* ── cabeçalho ─────────────────────────────────────────────── */
+
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line);
+}
+/* Os lockups trazem a área de respiro embutida na placa. Como a placa é
+   exatamente --paper (ou --graphite, no rodapé), esse respiro é invisível:
+   o logo pode ser dimensionado com folga sem abrir buraco no layout. */
+/* Todas as regras de display ficam na mesma especificidade (0-1-0) para que a
+   ordem e as media queries decidam. `.mark img { display: block }` venceria
+   `.mark--full { display: none }` e as queries nunca aplicariam. */
+.mark { display: inline-flex; text-decoration: none; }
+.mark--full { display: block; width: 210px; height: auto; } /* arte ~187px: acima do mínimo de 180px do guia */
+.mark--icon { display: block; width: 34px; height: auto; }
+@media (max-width: 29.99em) { .mark--full { display: none; } }
+@media (min-width: 30em)    { .mark--icon { display: none; } }
+
+/* ── botões ────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-block;
+  background: var(--graphite); color: var(--paper);
+  font: inherit; font-weight: 500;
+  padding: 0.7rem 1.15rem; border-radius: var(--r);
+  text-decoration: none; border: 1px solid var(--graphite);
+  transition: background 140ms ease;
+}
+.btn:hover { background: #20262A; }
+.btn--sm { padding: 0.5rem 0.9rem; font-size: 0.9375rem; }
+.btn--lg { padding: 0.9rem 1.5rem; font-size: 1.0625rem; }
+
+.linky { color: var(--amber-deep); font-size: 0.9375rem; text-decoration: none; border-bottom: 1px solid currentColor; }
+.linky:hover { color: var(--ink); }
+
+/* ── hero ──────────────────────────────────────────────────── */
+
+.hero { padding-top: clamp(3rem, 7vw, 5rem); }
+.hero h1 {
+  font-size: clamp(1.75rem, 0.95rem + 3.6vw, 3.5rem);
+  max-width: 19ch;
+}
+.hero .lede { margin-top: 1.5rem; font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); }
+.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 1.5rem; margin-top: 2.25rem; }
+
+/* ── painel escuro: "dentro do gateway" ────────────────────── */
+
+.panel {
+  background: var(--graphite);
+  color: var(--paper);
+  border-radius: var(--r);
+  padding: clamp(1.1rem, 3.5vw, 2rem);
+}
+.panel-head {
+  display: flex; justify-content: space-between; gap: 0.75rem;
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.28vw, 0.75rem);
+  letter-spacing: 0.06em; color: rgba(230,230,230,0.7);
+  padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-dark);
+}
+.panel-head span:last-child { text-align: right; }
+
+/* ── o caixote: um chat de trabalho qualquer ───────────────── */
+
+/* A janela é genérica de propósito. O argumento é sobre o gênero — qualquer
+   chat de IA hospedado fora — e imitar a interface de um produto nomeado
+   trocaria esse argumento por uma acusação a uma empresa só. */
+
+.plane { margin-top: clamp(2rem, 5vw, 3rem); }
+
+.chat {
+  background: var(--surface);
+  border: 1px solid var(--line-dark);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.chat-bar {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.6875rem;
+  letter-spacing: 0.03em; color: rgba(230,230,230,0.75);
+}
+.chat-dots { display: flex; gap: 5px; flex: none; }
+.chat-dots i {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid rgba(230,230,230,0.28);
+}
+.chat-title {
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* O selo é o ponto: o gateway está no caminho, não do lado. */
+.chat-via {
+  flex: none; color: var(--amber); font-size: 0.625rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+.chat-body { display: grid; grid-template-columns: 1fr; }
+
+/* A barra lateral é enfeite de contexto. Some antes de apertar o painel, que
+   é onde o plano precisa de curso. */
+.chat-side { display: none; }
+@media (min-width: 52em) {
+  .chat-body { grid-template-columns: 11.5rem 1fr; }
+  .chat-side {
+    display: flex; flex-direction: column; gap: 0.45rem;
+    padding: 0.85rem 0.8rem;
+    border-right: 1px solid var(--line-dark);
+    font-size: 0.75rem; line-height: 1.35;
+    color: rgba(230,230,230,0.55);
+  }
+}
+.side-new {
+  color: rgba(230,230,230,0.8);
+  border: 1px solid var(--line-dark); border-radius: 4px;
+  padding: 0.35rem 0.5rem; margin-bottom: 0.35rem;
+}
+.side-item {
+  padding: 0.25rem 0.1rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.side-item--on { color: var(--paper); }
+.side-foot {
+  margin-top: auto; padding-top: 0.85rem;
+  border-top: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.6875rem;
+}
+
+.chat-main { min-width: 0; padding: clamp(0.9rem, 3vw, 1.4rem); }
+
+/* ── mensagens ─────────────────────────────────────────────── */
+
+/* Nenhum ancestral de .pii pode ser posicionado: o offsetLeft que alimenta o
+   --cut é medido a partir de .stage. Bolha e mensagem ficam estáticas, e a
+   régua absoluta pinta por cima delas sem z-index. */
+.msg { display: flex; gap: 0.6rem; }
+.msg--user { justify-content: flex-end; }
+.msg--bot { margin-top: 1.1rem; }
+/* O turno anterior recua: é cenário, não é o que está sendo dito. Recuo por
+   cor declarada, não por opacity — opacity no ramo inteiro também apaga borda
+   e fundo, e some com o contraste do texto de um jeito que não dá para medir
+   olhando a folha de estilo. */
+.msg--antes .bubble {
+  font-size: 0.875rem; line-height: 1.5;
+  color: rgba(230,230,230,0.68);
+}
+.msg--antes .who { color: rgba(230,230,230,0.64); }
+.msg--antes + .msg--antes { margin-top: 0.7rem; }
+
+.bubble {
+  max-width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line-dark);
+  border-radius: 10px 10px 2px 10px;
+  padding: 0.7rem 0.85rem;
+}
+.who {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface-2); border: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.625rem;
+  color: rgba(230,230,230,0.7);
+}
+
+.bubble--bot { border-radius: 10px 10px 10px 2px; background: none; }
+.thinking { display: flex; gap: 5px; padding-block: 0.35em; }
+.thinking i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(230,230,230,0.5); animation: pulso 1.2s infinite;
+}
+.thinking i:nth-child(2) { animation-delay: 0.15s; }
+.thinking i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pulso { 0%, 60%, 100% { opacity: 0.2 } 30% { opacity: 1 } }
+
+.answer {
+  font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 0.9375rem); line-height: 1.55;
+}
+
+.payoff {
+  margin-top: 1.1rem; margin-bottom: 0.55rem;
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
+  line-height: 1.65; color: rgba(230,230,230,0.7);
+}
+.payoff b { font-weight: inherit; color: var(--amber); }
+
+/* ── caixa de digitação ────────────────────────────────────── */
+
+.composer {
+  display: flex; align-items: flex-end; gap: 0.6rem;
+  padding: 0.8rem;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line-dark);
+}
+/* Altura travada em três linhas: o texto rola dentro, como rola num compositor
+   de verdade, e o caixote não cresce enquanto a frase é digitada. */
+.composer-box {
+  flex: 1 1 auto; min-width: 0; margin: 0;
+  height: 4.65em; overflow: hidden;
+  padding: 0.5rem 0.65rem;
+  background: var(--graphite);
+  border: 1px solid var(--line-dark); border-radius: 6px;
+  font-family: var(--mono); font-size: 0.75rem; line-height: 1.55;
+  color: var(--paper); overflow-wrap: anywhere;
+}
+.composer-ghost { color: rgba(230,230,230,0.62); }
+.caret {
+  display: none; width: 1px; height: 1em; margin-left: 1px;
+  vertical-align: -0.14em; background: var(--amber);
+  animation: pisca 1s step-end infinite;
+}
+.is-typing .caret { display: inline-block; }
+/* Depois do envio o compositor volta a ficar vazio, com o texto de apoio de
+   novo à mostra — é o que um compositor de verdade faz. */
+.is-typing .composer-ghost { display: none; }
+@keyframes pisca { 50% { opacity: 0 } }
+
+.send {
+  flex: none; width: 32px; height: 32px; border-radius: 6px;
+  display: grid; place-items: center;
+  background: var(--amber); color: var(--graphite);
+  font-size: 0.9375rem; line-height: 1;
+}
+
+/* ── progressão dos estados ────────────────────────────────── */
+
+/* A mensagem nova, o plano e a resposta entram na ordem em que aconteceriam,
+   e a janela cresce a cada uma — é o que um chat faz. Reservar a altura desde
+   o início evitaria o empurrão, mas ao custo de um vão vazio do tamanho de
+   duas bolhas durante a digitação, que é justamente o momento que o leitor
+   está olhando. Tudo isto fica na especificidade 0-1-0 ou 0-2-0: nenhuma
+   regra de id, para as do .no-js continuarem vencendo. */
+.msg--novo, .msg--resposta, .answer, .payoff, .rule { display: none; }
+.is-sent .msg--novo, .is-sent .msg--resposta { display: flex; }
+.is-sent .rule { display: block; }
+.is-sent .hint { visibility: visible; }
+.is-answered .thinking { display: none; }
+.is-answered .answer, .is-answered .payoff { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking i, .caret { animation: none; }
+}
+
+/* ── elemento-assinatura: o plano de passagem ──────────────── */
+
+.stage {
+  position: relative;
+  padding-block: clamp(1.1rem, 3vw, 1.75rem);
+  padding-inline: 12px; /* trilho do plano: em 0% a linha para na margem, não sobre a letra */
+}
+
+.payload {
+  font-family: var(--mono);
+  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
+  line-height: 2.15;
+  margin: 0;
+}
+
+/* A largura é travada no maior dos dois estados, então trocar o conteúdo
+   nunca reflui o parágrafo. O fundo âmbar marca a região governada — ela
+   existe antes e depois do plano passar; o que muda é o que está dentro. */
+.pii {
+  --cut: 0px; /* estado inicial e fallback sem JS: prompt inteiro cru */
+  display: inline-grid;
+  align-items: baseline;
+  justify-items: center;
+  background: rgba(245,166,35,0.12);
+  border-bottom: 1px solid rgba(245,166,35,0.55);
+  border-radius: 2px 2px 0 0;
+}
+.pii > * { grid-row: 1; grid-column: 1; white-space: nowrap; }
+
+/* esquerda do plano = já passou pelo gateway; direita = ainda cru */
+.pii i {
+  font-style: normal; color: var(--amber); letter-spacing: 0.01em;
+  clip-path: inset(0 calc(100% - var(--cut)) 0 0);
+}
+.pii b { font-weight: inherit; clip-path: inset(0 0 0 var(--cut)); }
+
+/* a linha — bastião, não cadeado */
+.rule {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 2px; margin-left: -1px; background: var(--amber);
+  pointer-events: none;
+}
+.rule::before, .rule::after {
+  content: ""; position: absolute; left: 50%; width: 14px; height: 8px;
+  margin-left: -7px; background: var(--amber);
+}
+.rule::before { top: -8px;  clip-path: polygon(0 100%, 25% 0, 75% 0, 100% 100%); }
+.rule::after  { bottom: -8px; clip-path: polygon(0 0, 25% 100%, 75% 100%, 100% 0); }
+
+.ctrl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  margin: 0; padding: 0; opacity: 0; cursor: ew-resize;
+  -webkit-appearance: none; appearance: none; background: transparent;
+}
+.ctrl::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 100%; }
+.ctrl::-moz-range-thumb { width: 44px; height: 44px; border: 0; }
+.ctrl:focus-visible ~ .rule { box-shadow: 0 0 0 2px var(--graphite), 0 0 0 4px var(--amber); }
+
+/* Só aparece quando há o que arrastar — mas ocupa o lugar desde o começo,
+   para a mensagem não pular quando o convite entra. */
+.hint {
+  visibility: hidden;
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
+  margin-top: 0.35rem;
+}
+.hint kbd {
+  font: inherit; border: 1px solid var(--line-dark); border-radius: 3px;
+  padding: 0 0.3em; color: var(--paper);
+}
+.nojs {
+  display: none;
+  font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
+  margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
+}
+
+.audit {
+  margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
+  color: rgba(230,230,230,0.7);
+}
+#audit-body { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; }
+.audit b { font-weight: inherit; color: var(--amber); }
+.audit-label {
+  display: block; font-family: var(--mono); font-size: 0.6875rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(230,230,230,0.55); margin-top: 1rem;
+}
+
+.caption {
+  font-family: var(--mono); font-size: 0.75rem; color: var(--mist);
+  margin-top: 0.9rem;
+}
+
+/* ── listas de fatos ───────────────────────────────────────── */
+
+.facts { display: grid; gap: 2rem; margin-top: 2.5rem; }
+@media (min-width: 46em) { .facts { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+.fact h3 { font-size: 1.0625rem; }
+.fact p { margin-top: 0.6rem; color: var(--mist); font-size: 0.9375rem; }
+.fact .src { display: block; margin-top: 0.75rem; font-family: var(--mono); font-size: 0.75rem; color: var(--mist); }
+.nb { white-space: nowrap; } /* impede quebra em intervalos como 2026-2027 */
+
+/* ── o caminho de um prompt ────────────────────────────────── */
+
+.steps { margin-top: 2.75rem; display: grid; gap: 0; }
+.step {
+  display: grid; gap: 0.5rem 1.75rem;
+  padding-block: 1.75rem; border-top: 1px solid var(--line);
+}
+@media (min-width: 52em) {
+  .step { grid-template-columns: 4.5rem 15rem 1fr; align-items: start; }
+}
+.step-n { font-family: var(--mono); font-size: 0.8125rem; color: var(--amber-deep); letter-spacing: 0.08em; }
+.step h3 { font-size: 1.0625rem; }
+.step p { margin-top: 0.5rem; color: var(--mist); font-size: 0.9375rem; }
+.step-out {
+  font-family: var(--mono);
+  font-size: clamp(0.75rem, 0.68rem + 0.32vw, 0.8125rem);
+  line-height: 1.9; color: var(--ink);
+  background: #DEE0E1; border-radius: var(--r);
+  padding: 0.85rem 1rem; margin-top: 0.25rem;
+  overflow-x: auto;
+}
+.step-out em { font-style: normal; color: var(--amber-deep); }
+.step-out .dim { color: var(--mist); }
+
+/* ── diff de implantação ───────────────────────────────────── */
+
+.diff {
+  margin-top: 2.5rem; font-family: var(--mono);
+  font-size: clamp(0.75rem, 0.6rem + 0.75vw, 1.125rem);
+  line-height: 2; overflow-x: auto;
+}
+.diff div { white-space: nowrap; }
+.diff .minus { color: rgba(230,230,230,0.55); }
+.diff .plus { color: var(--amber); }
+.diff .sig { user-select: none; display: inline-block; width: 1.5em; }
+
+/* ── o que não fazemos ─────────────────────────────────────── */
+
+.limits { margin-top: 2.5rem; display: grid; gap: 0; }
+.limit { padding-block: 1.6rem; border-top: 1px solid var(--line); max-width: 76ch; }
+.limit h3 { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); max-width: 46ch; }
+.limit h3::before { content: "— "; color: var(--amber-deep); }
+.limit p { margin-top: 0.6rem; color: var(--mist); max-width: var(--measure); }
+
+/* ── fechamento ────────────────────────────────────────────── */
+
+.close h2 { max-width: 26ch; }
+.close .lede + .lede { margin-top: 1rem; }
+
+/* ── formulário ──────────────────────────────────────────── */
+
+.form { margin-top: 2.5rem; display: grid; gap: 1.1rem; max-width: 40rem; }
+@media (min-width: 40em) {
+  .form { grid-template-columns: 1fr 1fr; column-gap: 1.25rem; }
+  .field--wide, .form button, .form-status { grid-column: 1 / -1; }
+}
+.field { display: grid; gap: 0.35rem; }
+.field label { font-size: 0.9375rem; font-weight: 500; }
+.field .opt { color: var(--mist); font-weight: 400; }
+.form input, .form textarea {
+  font: inherit; color: var(--ink); background: #fff;
+  border: 1px solid #7E8794; /* 3,6:1 sobre branco — limite de campo precisa de contraste */
+  border-radius: var(--r); padding: 0.6rem 0.7rem; width: 100%;
+}
+.form textarea { resize: vertical; min-height: 5.5rem; }
+.form input:hover, .form textarea:hover { border-color: var(--ink); }
+.form button { justify-self: start; }
+.form button[disabled] { opacity: 0.55; cursor: progress; }
+
+/* honeypot: fora da tela, fora da ordem de tabulação, fora do leitor de tela */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.form-status { font-size: 0.9375rem; color: var(--ink); min-height: 1.4em; }
+.form-status:not(:empty) { border-left: 2px solid var(--amber-deep); padding-left: 0.7rem; }
+
+.foot {
+  background: var(--graphite); color: rgba(230,230,230,0.7);
+  font-size: 0.875rem; padding-block: 3rem;
+}
+.foot .mark--full { display: block; width: 210px; }
+.foot h3 {
+  font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(230,230,230,0.55);
+  font-weight: 400; margin-bottom: 0.75rem;
+}
+.foot-grid { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
+@media (min-width: 46em) { .foot-grid { grid-template-columns: 1.4fr 1fr; gap: 3rem; } }
+.foot ul { list-style: none; margin: 0; padding: 0; }
+/* cor sozinha não é sinal de link acessível */
+.foot a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
+.foot li { line-height: 1.5; }
+.foot li + li { margin-top: 0.65rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── sem JavaScript ──────────────────────────────────────────
+   Estas regras valem enquanto <html> tiver a classe .no-js. O app.js
+   remove a classe como primeira coisa que faz, então elas só ficam
+   valendo se o script não rodar. */
+  /* Sem JS o plano não tem como se mover: some com o controle e a linha,
+     e o leitor fica com o prompt cru — que é justamente a tese da página.
+     A versão transformada continua visível no passo 03. */
+  .no-js .ctrl, .no-js .rule, .no-js .hint, .no-js .audit-label, .no-js .audit { display: none; }
+  .no-js .nojs { display: block; }
+
+  /* A mensagem já entra enviada: sem script não há o que digitar nem o que
+     tokenizar, então a resposta do modelo e o remate ficam de fora. */
+  .no-js .msg--novo { display: flex; }
+  .no-js .msg--resposta, .no-js .payoff { display: none; }
