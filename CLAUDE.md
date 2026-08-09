@@ -125,9 +125,22 @@ está em `docs/README.md`.
 
 **Fase:** pré-Fase 0. O gateway não começou.
 
-**O que existe:** a landing page de validação (`index.html`, `obrigado.html`,
-`vercel.json`), no ar em <https://baluarte-teal.vercel.app>, com formulário
-do Formspree capturando pedido de call. Site estático, sem build.
+**O que existe:** a landing page de validação (`index.html`, `styles.css`,
+`app.js`, `obrigado.html`, `vercel.json`), no ar em
+<https://baluarte-teal.vercel.app>, com formulário do Formspree capturando
+pedido de call. Site estático, sem build.
+
+**Como o site vai para o ar:** o projeto da Vercel está ligado ao repositório.
+Push na branch gera preview, merge na `main` publica em produção. **Não usar
+deploy manual.** O deploy manual exige transmitir a árvore de arquivos inteira
+a cada publicação, e a truncagem já quebrou a produção três vezes seguidas —
+uma servindo o literal `PLACEHOLDER`, outra com 404 na raiz, outra com a folha
+de estilo vazia. Se algum dia precisar mesmo de deploy manual, conferir
+byte a byte contra o repositório depois (`sha256` de cada arquivo servido).
+
+O `index.html` foi separado de `styles.css` e `app.js` por causa disso: manter
+CSS e JS embutidos deixava um arquivo de 38 KB que ninguém transmite à mão sem
+errar. A separação continua valendo mesmo com o deploy automático.
 
 **Última decisão relevante:** a identidade visual v1 entrou no repositório
 (`assets/marca/`, `favicon/`, `docs/guia-da-marca.md`) e na landing. A paleta da

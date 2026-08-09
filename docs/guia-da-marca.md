@@ -88,6 +88,22 @@ Nunca usar o símbolo completo em favicon.
 
 **Tamanho mínimo:** lockup horizontal, 180px de largura. Abaixo disso, usar só o símbolo.
 
+> **Nota de implementação — o nome não some junto com o wordmark.**
+>
+> Em telefone não sobram 180px ao lado do botão do cabeçalho, então a landing
+> troca o lockup pelo símbolo, como esta regra manda. Só que aí a marca ficava
+> sem nome escrito justamente na largura onde a maior parte das visitas
+> acontece — só o símbolo, sem dizer de quem é.
+>
+> A regra vale para a arte: o wordmark desenhado não pode ser reduzido abaixo
+> do que foi desenhado para aguentar. O nome escrito pode. Abaixo de 30em a
+> landing põe **BALUARTE** como texto vivo ao lado do símbolo, em 15px, peso
+> 700, entreletra 0,09em — proporção próxima à do wordmark no lockup, onde a
+> altura de caixa alta fica em torno de metade da altura do símbolo.
+>
+> Quando o lockup volta a caber, o texto sai: quem traz o nome de novo é o
+> wordmark desenhado, e ter os dois seria repetição.
+
 ### Proibições
 
 - ❌ Alterar a proporção entre símbolo e wordmark
