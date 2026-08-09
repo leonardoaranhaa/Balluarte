@@ -51,25 +51,82 @@
       <a class="linky" href="#limites">Ver o que não fazemos ↓</a>
     </div>
 
-    <!-- ELEMENTO-ASSINATURA: o plano de passagem -->
-    <div class="plane panel">
-      <div class="panel-head">
-        <span>o que sai da empresa</span>
-        <span>o que foi escrito</span>
+    <!-- ELEMENTO-ASSINATURA: o plano de passagem, dentro de um chat de trabalho -->
+    <div class="plane panel" id="plane">
+      <!-- O caixote é decorativo: existe para situar o leitor num chat de
+           trabalho qualquer. O conteúdo que importa (prompt, trilha, resposta)
+           fica fora do aria-hidden. -->
+      <div class="chat" id="chat">
+        <div class="chat-bar" aria-hidden="true">
+          <span class="chat-dots"><i></i><i></i><i></i></span>
+          <span class="chat-title">assistente-interno · vetorcred</span>
+          <span class="chat-via">via BALUARTE</span>
+        </div>
+
+        <div class="chat-body">
+          <aside class="chat-side" aria-hidden="true">
+            <span class="side-new">＋ Nova conversa</span>
+            <span class="side-item side-item--on">Renegociação — carteira B</span>
+            <span class="side-item">Minuta de aditivo</span>
+            <span class="side-item">Régua de cobrança</span>
+            <span class="side-foot">MC · Marcos Cunha</span>
+          </aside>
+
+          <div class="chat-main">
+            <div class="panel-head">
+              <span>o que sai da empresa</span>
+              <span>o que foi escrito</span>
+            </div>
+
+            <!-- Um turno anterior sem dado pessoal nenhum. Serve para o leitor
+                 ver que a conversa é rotina de trabalho, e para o contraste com
+                 a mensagem seguinte ficar evidente: nem toda pergunta carrega
+                 dado de cliente, e o gateway só age nas que carregam. -->
+            <div class="msg msg--user msg--antes">
+              <p class="bubble">Qual é o desconto máximo que posso oferecer na carteira B?</p>
+            </div>
+            <div class="msg msg--bot msg--antes">
+              <span class="who" aria-hidden="true">IA</span>
+              <p class="bubble bubble--bot">Até 30% sobre juros e multa, sem tocar no principal. Acima disso precisa de aprovação do comitê de crédito.</p>
+            </div>
+
+            <div class="stage" id="stage">
+              <div class="msg msg--user msg--novo" id="msg-user">
+                <p class="bubble payload">Analise a proposta de renegociação para <span class="pii"><b>Marina Alves</b><i>«NOME:4c1e»</i></span>, CPF <span class="pii"><b>111.444.777-35</b><i>«CPF:7f3a»</i></span>, e-mail <span class="pii"><b>marina@vetorcred.com.br</b><i>«EMAIL:b9024f»</i></span>, com saldo devedor de R$ 84.200 em 14 parcelas.</p>
+              </div>
+              <input class="ctrl" id="ctrl" type="range" min="0" max="1000" value="0" step="1"
+                     aria-label="Plano de passagem: arraste para a direita para aplicar a política ao prompt">
+              <div class="rule" id="rule" aria-hidden="true"></div>
+            </div>
+
+            <p class="hint" id="hint">arraste o plano para a direita · ou use <kbd>←</kbd> <kbd>→</kbd></p>
+
+            <div class="msg msg--bot msg--resposta" id="msg-bot">
+              <span class="who" aria-hidden="true">IA</span>
+              <div class="bubble bubble--bot">
+                <span class="thinking" aria-hidden="true"><i></i><i></i><i></i></span>
+                <p class="answer" id="answer">Marina Alves tem R$ 84.200 em aberto. Em 14 parcelas, são R$ 6.014,29 por mês; alongando para 24, caem para R$ 3.508,33. A segunda opção cabe melhor no limite de comprometimento de renda da carteira.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <p class="composer-box" id="composer-box">
+            <span class="composer-ghost" id="composer-ghost">Pergunte alguma coisa</span><span id="typed"></span><span class="caret" id="caret" aria-hidden="true"></span>
+          </p>
+          <span class="send" aria-hidden="true">↑</span>
+        </div>
       </div>
 
-      <div class="stage" id="stage">
-        <p class="payload">Analise a proposta de renegociação para <span class="pii"><b>Marina Alves</b><i>«NOME:4c1e»</i></span>, CPF <span class="pii"><b>111.444.777-35</b><i>«CPF:7f3a»</i></span>, e-mail <span class="pii"><b>marina@vetorcred.com.br</b><i>«EMAIL:b9024f»</i></span>, com saldo devedor de R$ 84.200 em 14 parcelas.</p>
-        <input class="ctrl" id="ctrl" type="range" min="0" max="1000" value="0" step="1"
-               aria-label="Plano de passagem: arraste para a direita para aplicar a política ao prompt">
-        <div class="rule" id="rule" aria-hidden="true"></div>
-      </div>
-
-      <p class="hint" aria-hidden="true">arraste o plano para a direita · ou use <kbd>←</kbd> <kbd>→</kbd></p>
+      <p class="payoff" id="payoff">
+        O provedor recebeu <b>«NOME:4c1e»</b>. O nome volta na resposta, restituído
+        pelo gateway a partir do cofre de mapeamento do seu tenant.
+      </p>
 
       <span class="audit-label">trilha de auditoria</span>
       <p class="audit" id="audit" role="status">
-        <span id="audit-body"><span>aguardando tráfego</span></span>
+        <span id="audit-body"><span>--:--:--</span><span>politica=<b>tokenizar</b></span><span>— achados</span><span><b>—</b> transformados</span><span>destino=anthropic</span><span>sha256:————————…</span></span>
       </p>
 
       <p class="nojs">
@@ -80,8 +137,9 @@
     </div>
 
     <p class="caption">
-      CPF 111.444.777-35 é o valor de teste público usado na documentação técnica
-      brasileira. Passa na validação de dígito verificador e não pertence a ninguém.
+      Empresa, pessoa e conversa são fictícias. O CPF 111.444.777-35 é o valor de
+      teste público usado na documentação técnica brasileira: passa na validação
+      de dígito verificador e não pertence a ninguém.
     </p>
   </section>
 

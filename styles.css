@@ -25,6 +25,12 @@
   --line:       #CFD1D2;
   --line-dark:  #262A2C;
 
+  /* Duas elevações acima de --graphite, só para o caixote do chat ter volume.
+     Não são cores de marca — são a mesma base clareada, e o âmbar continua
+     sendo o único acento. */
+  --surface:    #14181A;
+  --surface-2:  #1B2022;
+
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono",
@@ -149,9 +155,190 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 }
 .panel-head span:last-child { text-align: right; }
 
-/* ── elemento-assinatura: o plano de passagem ──────────────── */
+/* ── o caixote: um chat de trabalho qualquer ───────────────── */
+
+/* A janela é genérica de propósito. O argumento é sobre o gênero — qualquer
+   chat de IA hospedado fora — e imitar a interface de um produto nomeado
+   trocaria esse argumento por uma acusação a uma empresa só. */
 
 .plane { margin-top: clamp(2rem, 5vw, 3rem); }
+
+.chat {
+  background: var(--surface);
+  border: 1px solid var(--line-dark);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.chat-bar {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.6875rem;
+  letter-spacing: 0.03em; color: rgba(230,230,230,0.75);
+}
+.chat-dots { display: flex; gap: 5px; flex: none; }
+.chat-dots i {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid rgba(230,230,230,0.28);
+}
+.chat-title {
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* O selo é o ponto: o gateway está no caminho, não do lado. */
+.chat-via {
+  flex: none; color: var(--amber); font-size: 0.625rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+.chat-body { display: grid; grid-template-columns: 1fr; }
+
+/* A barra lateral é enfeite de contexto. Some antes de apertar o painel, que
+   é onde o plano precisa de curso. */
+.chat-side { display: none; }
+@media (min-width: 52em) {
+  .chat-body { grid-template-columns: 11.5rem 1fr; }
+  .chat-side {
+    display: flex; flex-direction: column; gap: 0.45rem;
+    padding: 0.85rem 0.8rem;
+    border-right: 1px solid var(--line-dark);
+    font-size: 0.75rem; line-height: 1.35;
+    color: rgba(230,230,230,0.55);
+  }
+}
+.side-new {
+  color: rgba(230,230,230,0.8);
+  border: 1px solid var(--line-dark); border-radius: 4px;
+  padding: 0.35rem 0.5rem; margin-bottom: 0.35rem;
+}
+.side-item {
+  padding: 0.25rem 0.1rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.side-item--on { color: var(--paper); }
+.side-foot {
+  margin-top: auto; padding-top: 0.85rem;
+  border-top: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.6875rem;
+}
+
+.chat-main { min-width: 0; padding: clamp(0.9rem, 3vw, 1.4rem); }
+
+/* ── mensagens ─────────────────────────────────────────────── */
+
+/* Nenhum ancestral de .pii pode ser posicionado: o offsetLeft que alimenta o
+   --cut é medido a partir de .stage. Bolha e mensagem ficam estáticas, e a
+   régua absoluta pinta por cima delas sem z-index. */
+.msg { display: flex; gap: 0.6rem; }
+.msg--user { justify-content: flex-end; }
+.msg--bot { margin-top: 1.1rem; }
+/* O turno anterior recua: é cenário, não é o que está sendo dito. Recuo por
+   cor declarada, não por opacity — opacity no ramo inteiro também apaga borda
+   e fundo, e some com o contraste do texto de um jeito que não dá para medir
+   olhando a folha de estilo. */
+.msg--antes .bubble {
+  font-size: 0.875rem; line-height: 1.5;
+  color: rgba(230,230,230,0.68);
+}
+.msg--antes .who { color: rgba(230,230,230,0.64); }
+.msg--antes + .msg--antes { margin-top: 0.7rem; }
+
+.bubble {
+  max-width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line-dark);
+  border-radius: 10px 10px 2px 10px;
+  padding: 0.7rem 0.85rem;
+}
+.who {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface-2); border: 1px solid var(--line-dark);
+  font-family: var(--mono); font-size: 0.625rem;
+  color: rgba(230,230,230,0.7);
+}
+
+.bubble--bot { border-radius: 10px 10px 10px 2px; background: none; }
+.thinking { display: flex; gap: 5px; padding-block: 0.35em; }
+.thinking i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(230,230,230,0.5); animation: pulso 1.2s infinite;
+}
+.thinking i:nth-child(2) { animation-delay: 0.15s; }
+.thinking i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pulso { 0%, 60%, 100% { opacity: 0.2 } 30% { opacity: 1 } }
+
+.answer {
+  font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 0.9375rem); line-height: 1.55;
+}
+
+.payoff {
+  margin-top: 1.1rem; margin-bottom: 0.55rem;
+  font-family: var(--mono); font-size: clamp(0.6875rem, 0.63rem + 0.3vw, 0.8125rem);
+  line-height: 1.65; color: rgba(230,230,230,0.7);
+}
+.payoff b { font-weight: inherit; color: var(--amber); }
+
+/* ── caixa de digitação ────────────────────────────────────── */
+
+.composer {
+  display: flex; align-items: flex-end; gap: 0.6rem;
+  padding: 0.8rem;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line-dark);
+}
+/* Altura travada em três linhas: o texto rola dentro, como rola num compositor
+   de verdade, e o caixote não cresce enquanto a frase é digitada. */
+.composer-box {
+  flex: 1 1 auto; min-width: 0; margin: 0;
+  height: 4.65em; overflow: hidden;
+  padding: 0.5rem 0.65rem;
+  background: var(--graphite);
+  border: 1px solid var(--line-dark); border-radius: 6px;
+  font-family: var(--mono); font-size: 0.75rem; line-height: 1.55;
+  color: var(--paper); overflow-wrap: anywhere;
+}
+.composer-ghost { color: rgba(230,230,230,0.62); }
+.caret {
+  display: none; width: 1px; height: 1em; margin-left: 1px;
+  vertical-align: -0.14em; background: var(--amber);
+  animation: pisca 1s step-end infinite;
+}
+.is-typing .caret { display: inline-block; }
+/* Depois do envio o compositor volta a ficar vazio, com o texto de apoio de
+   novo à mostra — é o que um compositor de verdade faz. */
+.is-typing .composer-ghost { display: none; }
+@keyframes pisca { 50% { opacity: 0 } }
+
+.send {
+  flex: none; width: 32px; height: 32px; border-radius: 6px;
+  display: grid; place-items: center;
+  background: var(--amber); color: var(--graphite);
+  font-size: 0.9375rem; line-height: 1;
+}
+
+/* ── progressão dos estados ────────────────────────────────── */
+
+/* A mensagem nova, o plano e a resposta entram na ordem em que aconteceriam,
+   e a janela cresce a cada uma — é o que um chat faz. Reservar a altura desde
+   o início evitaria o empurrão, mas ao custo de um vão vazio do tamanho de
+   duas bolhas durante a digitação, que é justamente o momento que o leitor
+   está olhando. Tudo isto fica na especificidade 0-1-0 ou 0-2-0: nenhuma
+   regra de id, para as do .no-js continuarem vencendo. */
+.msg--novo, .msg--resposta, .answer, .payoff, .rule { display: none; }
+.is-sent .msg--novo, .is-sent .msg--resposta { display: flex; }
+.is-sent .rule { display: block; }
+.is-sent .hint { visibility: visible; }
+.is-answered .thinking { display: none; }
+.is-answered .answer, .is-answered .payoff { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking i, .caret { animation: none; }
+}
+
+/* ── elemento-assinatura: o plano de passagem ──────────────── */
 
 .stage {
   position: relative;
@@ -209,7 +396,10 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
 .ctrl::-moz-range-thumb { width: 44px; height: 44px; border: 0; }
 .ctrl:focus-visible ~ .rule { box-shadow: 0 0 0 2px var(--graphite), 0 0 0 4px var(--amber); }
 
+/* Só aparece quando há o que arrastar — mas ocupa o lugar desde o começo,
+   para a mensagem não pular quando o convite entra. */
 .hint {
+  visibility: hidden;
   font-family: var(--mono); font-size: 0.75rem; color: rgba(230,230,230,0.7);
   margin-top: 0.35rem;
 }
@@ -361,3 +551,8 @@ h2 { font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.125rem); max-width: 22ch; }
      A versão transformada continua visível no passo 03. */
   .no-js .ctrl, .no-js .rule, .no-js .hint, .no-js .audit-label, .no-js .audit { display: none; }
   .no-js .nojs { display: block; }
+
+  /* A mensagem já entra enviada: sem script não há o que digitar nem o que
+     tokenizar, então a resposta do modelo e o remate ficam de fora. */
+  .no-js .msg--novo { display: flex; }
+  .no-js .msg--resposta, .no-js .payoff { display: none; }
