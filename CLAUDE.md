@@ -174,9 +174,29 @@ crus, e falso positivo zero nas dez armadilhas de DV. Relatório em
    próprio, que é a forma de todo prompt corporativo. Não ligar detecção de
    nome antes de medir `pt_core_news_lg` e definir piso de score.
 
-**Próximo passo lógico:** Fase 1 do `docs/playbooks/construcao.md` — motor de
-política. Critério de saída: determinismo provado em teste e explicabilidade
-funcionando.
+**Fase 1 concluída.** Motor de política em `gateway/baluarte/politica/`:
+política declarativa em YAML, avaliador determinístico, catálogo versionado com
+consulta por data, e decisão explicável com base normativa e sha256 da política
+vigente. 122 testes. Relatório em `gateway/fase1/RELATORIO.md`.
+
+**Ordem de restritividade — decisão de produto, confirmar:**
+`permitir < tokenizar < mascarar < bloquear`. O degrau discutível é mascarar
+acima de tokenizar: pelo que sai da empresa os dois se equivalem, mas tokenizar
+deixa cofre de mapeamento para trás e mascarar destrói o valor. Isolada em
+`politica/acoes.py`; inverter é uma linha e um teste avisa.
+
+**O que a Fase 1 descobriu:** fail-closed e classificador ruim não convivem. O
+classificador emite 15 tipos de entidade e a política decide sobre 5; as outras
+13 caem no padrão `entidade_sem_regra`, que é bloquear. Some-se a isso que o
+Presidio devolve achados sobrepostos — `ORGANIZATION` e `URL` casam dentro do
+próprio e-mail já detectado — e o resultado é requisição legítima bloqueada.
+Daí `politica/cobertura.py`, que confere o encaixe antes de a política entrar
+em vigor. Resolver sobreposição é da camada de classificação, fica para a
+Fase 3.
+
+**Próximo passo lógico:** Fase 2 do `docs/playbooks/construcao.md` — trilha de
+auditoria. Critério de saída: teste de vazamento de PII passando e integridade
+verificável.
 
 **Atenção ao estruturar código:** o site estático vive na raiz e a Vercel
 está apontada para a raiz. Quando o dashboard Next.js entrar (Fase 5), os
