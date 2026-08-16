@@ -152,10 +152,31 @@ desvio cria emenda visível.
 claro e reprova AA. Serve dentro do logo, onde a WCAG isenta marca; para texto
 usar `#7E5200`, que dá 5,4:1.
 
-**Próximo passo lógico:** Fase 0 do `docs/playbooks/construcao.md` — validar
-a premissa técnica (LiteLLM + Presidio, recognizers de CPF/CNPJ com dígito
-verificador, conjunto de teste de 50 exemplos). Critério de saída: falso
-negativo zero em CPF e CNPJ formatados.
+**Fase 0 concluída.** O gateway vive em `gateway/`, fora da raiz, porque a
+Vercel publica a raiz como site estático e um `requirements.txt` lá em cima a
+faria detectar o projeto como Python. Recognizers de CPF e CNPJ com dígito
+verificador, corpus de 50 casos, 60 testes, guardrail do LiteLLM em `pre_call`.
+Critério de saída atingido: falso negativo **zero** em CPF e CNPJ, formatados e
+crus, e falso positivo zero nas dez armadilhas de DV. Relatório em
+`gateway/fase0/RELATORIO.md`.
+
+**Três coisas que a Fase 0 descobriu e mudam o plano:**
+
+1. O guardrail de Presidio que vem no LiteLLM fala HTTP e só aceita recognizer
+   declarado em JSON — regex e score, sem campo de validação. Por ele não há
+   como exigir dígito verificador. Daí o guardrail próprio, com analisador em
+   processo.
+2. O Presidio não traz nenhum documento brasileiro. CPF e CNPJ estão feitos;
+   RG, CNS, PIS/PASEP, título e CNH continuam nossos.
+3. **O `pt_core_news_sm` não serve para detectar nome.** Disparou 26 achados de
+   PERSON/LOCATION no corpus, um correto, todos com score 0,85 — lê verbo no
+   imperativo em começo de frase ("Escreva", "Analise", "Redija") como nome
+   próprio, que é a forma de todo prompt corporativo. Não ligar detecção de
+   nome antes de medir `pt_core_news_lg` e definir piso de score.
+
+**Próximo passo lógico:** Fase 1 do `docs/playbooks/construcao.md` — motor de
+política. Critério de saída: determinismo provado em teste e explicabilidade
+funcionando.
 
 **Atenção ao estruturar código:** o site estático vive na raiz e a Vercel
 está apontada para a raiz. Quando o dashboard Next.js entrar (Fase 5), os
