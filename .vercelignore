@@ -1,0 +1,22 @@
+# O que a Vercel NÃO publica.
+#
+# A Vercel está apontada para a raiz do repositório e serve como arquivo
+# estático tudo que encontra. Sem esta lista, `baluarte-teal.vercel.app/
+# docs/comercial-e-gtm.md` devolve 200 — tabela de preço, política de
+# desconto, matriz de objeções e script de discovery, legíveis por qualquer
+# um que digite o caminho, inclusive por quem está do outro lado de uma call.
+#
+# Publicar por engano a estratégia comercial no site de um produto de
+# privacidade é o tipo de incoerência que o comprador nota. Só o site vai
+# para o ar; o resto do repositório fica no repositório.
+#
+# Quando o dashboard Next.js entrar (Fase 5), a decisão maior continua de pé:
+# mover o site para `site/` e reapontar a Vercel, ou separar em outro
+# repositório. Esta lista é o mínimo até lá.
+
+CLAUDE.md
+README.md
+docs/
+gateway/
+
+# Mantidos de propósito, porque a página usa: assets/marca/ e favicon/.
