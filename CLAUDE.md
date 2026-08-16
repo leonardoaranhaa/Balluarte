@@ -123,8 +123,8 @@ está em `docs/README.md`.
 
 ## Status atual
 
-**Fase:** 3 de 5. Fases 0, 1 e 2 concluídas; o gateway ainda não intercepta
-tráfego real.
+**Fase:** 4 de 5. Fases 0 a 3 concluídas. O gateway intercepta, decide,
+transforma e registra; falta perfil por setor, Dossiê e dashboard.
 
 **O que existe:** a landing page de validação (`index.html`, `styles.css`,
 `app.js`, `obrigado.html`, `vercel.json`), no ar em
@@ -213,10 +213,32 @@ verificação disse "íntegra", corretamente. Um teste de adulteração que vira
 no-op passa para sempre e não prova nada. Agora tanto a demo quanto o teste
 abortam se a alteração não mudar nada.
 
-**Próximo passo lógico:** Fase 3 do `docs/playbooks/construcao.md` — integração
-do proxy. Critério de saída: troca de URL base sem alteração de código e p95
-medido. É também onde entra a resolução de achados sobrepostos que a Fase 1
-deixou pendente.
+**Fase 3 concluída.** Proxy em `gateway/baluarte/proxy/`, cofre em
+`tokenizacao/`, resolução de sobreposição em `classificacao/`. 183 testes.
+O SDK oficial da Anthropic atravessa o gateway trocando só a `base_url`, testado
+em socket de verdade. Overhead p95 de **52 ms** contra meta de 300. Relatório em
+`gateway/fase3/RELATORIO.md`.
+
+**Decisão de arquitetura:** o corpo da requisição é repassado sem
+reserialização, e não traduzido pelo LiteLLM. A regra 6 (compatibilidade de API
+é sagrada) pesa mais aqui: traduzir para formato intermediário e de volta é onde
+um campo novo do provedor se perde. O LiteLLM segue no guardrail da Fase 0 e no
+roteamento multi-provedor.
+
+**O que a medição de latência ensinou:** o gargalo não era a classificação, era
+um `AsyncClient` criado por requisição — sem keep-alive, ~45 ms, mais que todo o
+resto somado. A segunda correção foi classificar cada trecho uma vez em vez de
+classificar o concatenado e depois cada trecho; além do custo, classificar o
+concatenado é **incorreto**, porque inventa entidade na emenda entre mensagens.
+
+**Lição de método:** um teste pode ser enganado pelo sistema funcionando. O
+dublê do provedor ecoava o corpo recebido, e a destokenização da resposta
+corretamente devolvia o CPF antes de o teste ver. Observar o que saiu exige
+ponto de observação fora do caminho de volta.
+
+**Próximo passo lógico:** Fase 4 do `docs/playbooks/construcao.md` — perfis de
+política por setor e Dossiê de Conformidade. Critério de saída: três perfis
+implementados e Dossiê com declaração de escopo.
 
 **Atenção ao estruturar código:** o site estático vive na raiz e a Vercel
 está apontada para a raiz. Quando o dashboard Next.js entrar (Fase 5), os
