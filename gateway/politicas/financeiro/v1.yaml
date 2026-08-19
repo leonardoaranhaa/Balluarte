@@ -1,0 +1,62 @@
+# Perfil financeiro — primeira versão.
+#
+# Esta política nunca deve ser editada. Mudança gera v2, ao lado desta, e o
+# arquivo antigo fica para reconstituir decisões já tomadas. O sha256 deste
+# texto é o que amarra cada decisão passada ao que estava escrito na época.
+
+nome: "Financeiro — renegociação e cobrança"
+versao: 1
+vigente_desde: 2026-08-01
+
+regras:
+  - entidade: BR_CPF
+    acao: tokenizar
+    base_normativa: >-
+      LGPD art. 33 — enviar CPF a provedor fora do país é transferência
+      internacional de dado pessoal e exige hipótese legal registrada. A
+      tokenização remove o dado da requisição e mantém a utilidade para o
+      modelo.
+
+  - entidade: BR_CNPJ
+    acao: permitir
+    base_normativa: >-
+      CNPJ de pessoa jurídica não é dado pessoal na acepção do art. 5º, I, da
+      LGPD. Permitido de forma explícita para que a decisão fique registrada
+      como escolha, e não como omissão da política.
+
+  - entidade: EMAIL_ADDRESS
+    acao: tokenizar
+    base_normativa: >-
+      LGPD art. 5º, I — e-mail corporativo nominal identifica pessoa natural.
+      Mesmo tratamento do CPF na transferência internacional do art. 33.
+
+  - entidade: PHONE_NUMBER
+    acao: mascarar
+    base_normativa: >-
+      LGPD art. 5º, I — telefone é dado pessoal. Mascarado em vez de
+      tokenizado porque a renegociação não precisa raciocinar sobre o número,
+      e mascarar não cria entrada no cofre.
+
+  - entidade: IBAN_CODE
+    acao: bloquear
+    base_normativa: >-
+      Resolução BCB nº 4.658/2018, art. 3º — dado de conta e meio de pagamento
+      exige tratamento com controle reforçado. Não há caso de uso de IA
+      generativa que justifique a saída desse dado.
+
+padrao:
+  # Entidade detectada que esta política não menciona. Fail-closed: a regra 3
+  # do CLAUDE.md vale aqui também. Se o classificador achou algo que a política
+  # não previu, ninguém decidiu que aquilo pode sair.
+  entidade_sem_regra:
+    acao: bloquear
+    base_normativa: >-
+      LGPD art. 6º, VIII (responsabilização e prestação de contas) — dado
+      pessoal para o qual não existe decisão registrada não pode ser
+      transferido. A ausência de regra não é autorização.
+
+  nenhuma_deteccao:
+    acao: permitir
+    base_normativa: >-
+      Sem dado pessoal na requisição não há tratamento a restringir; o art. 33
+      não é acionado.

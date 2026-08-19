@@ -1,0 +1,68 @@
+# Perfil financeiro — segunda versão.
+#
+# Existe para exercitar a consulta histórica: uma requisição de agosto continua
+# sendo julgada pela v1, mesmo depois desta entrar em vigor. A v1 não foi
+# alterada — está intacta ao lado, que é o que a regra 5 do CLAUDE.md exige.
+#
+# O que mudou da v1, e por quê:
+#
+# - BR_CNPJ passou de `permitir` a `tokenizar`. CNPJ isolado não é dado
+#   pessoal, mas CNPJ de MEI se confunde com o CPF do titular, e a carteira
+#   tem MEI. A decisão foi tratar o caso mais restritivo.
+# - Entrou BR_CPF uma segunda vez, com `mascarar`, para a rota de cobrança em
+#   massa, que não precisa reverter o valor. Duas regras para a mesma entidade
+#   é conflito de propósito: quem decide é a precedência, e mascarar vence
+#   tokenizar. Ver `baluarte/politica/acoes.py`.
+
+nome: "Financeiro — renegociação e cobrança"
+versao: 2
+vigente_desde: 2026-09-01
+
+regras:
+  - entidade: BR_CPF
+    acao: tokenizar
+    base_normativa: >-
+      LGPD art. 33 — transferência internacional de dado pessoal exige
+      hipótese legal registrada.
+
+  - entidade: BR_CPF
+    acao: mascarar
+    base_normativa: >-
+      LGPD art. 6º, III (necessidade) — a régua de cobrança em massa não
+      precisa do valor de volta na resposta, então não se justifica criar
+      entrada no cofre de tokenização para ela.
+
+  - entidade: BR_CNPJ
+    acao: tokenizar
+    base_normativa: >-
+      LGPD art. 5º, I, combinado com o art. 33 — CNPJ de MEI identifica pessoa
+      natural, e a carteira tem MEI. Na dúvida entre dado de empresa e dado de
+      pessoa, trata-se como dado de pessoa.
+
+  - entidade: EMAIL_ADDRESS
+    acao: tokenizar
+    base_normativa: >-
+      LGPD art. 5º, I — e-mail nominal identifica pessoa natural.
+
+  - entidade: PHONE_NUMBER
+    acao: mascarar
+    base_normativa: >-
+      LGPD art. 5º, I — telefone é dado pessoal, e a rota não precisa
+      raciocinar sobre o número.
+
+  - entidade: IBAN_CODE
+    acao: bloquear
+    base_normativa: >-
+      Resolução BCB nº 4.658/2018, art. 3º — dado de conta e meio de pagamento
+      não sai para provedor de IA generativa.
+
+padrao:
+  entidade_sem_regra:
+    acao: bloquear
+    base_normativa: >-
+      LGPD art. 6º, VIII — a ausência de regra não é autorização.
+
+  nenhuma_deteccao:
+    acao: permitir
+    base_normativa: >-
+      Sem dado pessoal não há tratamento a restringir.
