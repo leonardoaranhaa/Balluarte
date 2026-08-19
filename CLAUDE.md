@@ -123,7 +123,8 @@ está em `docs/README.md`.
 
 ## Status atual
 
-**Fase:** pré-Fase 0. O gateway não começou.
+**Fase:** 3 de 5. Fases 0, 1 e 2 concluídas; o gateway ainda não intercepta
+tráfego real.
 
 **O que existe:** a landing page de validação (`index.html`, `styles.css`,
 `app.js`, `obrigado.html`, `vercel.json`), no ar em
@@ -194,9 +195,28 @@ Daí `politica/cobertura.py`, que confere o encaixe antes de a política entrar
 em vigor. Resolver sobreposição é da camada de classificação, fica para a
 Fase 3.
 
-**Próximo passo lógico:** Fase 2 do `docs/playbooks/construcao.md` — trilha de
-auditoria. Critério de saída: teste de vazamento de PII passando e integridade
-verificável.
+**Fase 2 concluída.** Trilha de auditoria em `gateway/baluarte/auditoria/` e
+`gateway/migrations/`: tabela append-only no Postgres, encadeamento por sha256,
+segregação por tenant em row-level security. 146 testes, 24 contra Postgres de
+verdade. Relatório em `gateway/fase2/RELATORIO.md`.
+
+**O que a Fase 2 fixou como propriedade de esquema, não de disciplina:** a
+trilha não tem coluna onde um valor caberia, e há teste varrendo a linha
+inteira em SQL — coluna nova entra na varredura sozinha. A segregação é row-level
+security e não `WHERE`: sessão sem tenant declarado vê zero linhas, nunca a base
+toda. A cadeia é **por tenant**, senão verificar a própria trilha exigiria ler
+o hash da alheia.
+
+**Lição da fase, que vale para todo teste de adulteração:** o primeiro
+`UPDATE` da demonstração foi no-op — troquei `permitir` por `permitir` — e a
+verificação disse "íntegra", corretamente. Um teste de adulteração que vira
+no-op passa para sempre e não prova nada. Agora tanto a demo quanto o teste
+abortam se a alteração não mudar nada.
+
+**Próximo passo lógico:** Fase 3 do `docs/playbooks/construcao.md` — integração
+do proxy. Critério de saída: troca de URL base sem alteração de código e p95
+medido. É também onde entra a resolução de achados sobrepostos que a Fase 1
+deixou pendente.
 
 **Atenção ao estruturar código:** o site estático vive na raiz e a Vercel
 está apontada para a raiz. Quando o dashboard Next.js entrar (Fase 5), os
